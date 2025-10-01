@@ -1,0 +1,21 @@
+<mujoco model="table">
+  <compiler angle="radian" autolimits="true"/>  
+  <visual>
+    <!-- <headlight ambient="0 0 0" diffuse="0 0 0" specular="1 1 1"/> -->
+    <!-- <quality shadowsize="8192"/> -->
+  </visual>
+
+  <asset>
+    <texture name="table" file="assets/dark_wood.png" type="2d"/>
+    <material name="table" texture="table" specular="1" shininess="1"/>
+    <mesh file="assets/table.obj" scale=".008 .008 .008"/>
+  </asset>
+
+  <worldbody>
+    <body name="table" pos="0.6 0.0 0.318" euler="0 0 0">
+      <geom type="mesh" mesh="table" pos="0.0 0.0 -0.318" euler="1.57 1.57 0" material="table" contype="0" conaffinity="0"/>
+      <geom type="box" size="0.40 0.72 0.01" pos="0.0 0.0 0.3" rgba="1 0 0 0.0" contype="1" conaffinity="1" condim="1"/>
+      <!-- <site name="sword_table" pos="0.1 -0.2 0.025" euler="-3.14 0 0" size="0.01" rgba="0 1 0 1"/> -->
+    </body>
+  </worldbody>
+</mujoco>

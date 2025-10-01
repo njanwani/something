@@ -1,8 +1,10 @@
 import mujoco
+from pathlib import Path
 
 # Load your model
-xml_path = 'xmls/unitree_g1/scene.xml'
-model = mujoco.MjModel.from_xml_path(xml_path)
+xml = Path('xmls/scene.xml')
+
+model = mujoco.MjModel.from_xml_string(xml.read_text())
 
 print("Total joints:", model.njnt)
 print("=" * 40)

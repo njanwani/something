@@ -1,0 +1,44 @@
+<mujoco model="wall">
+  <compiler angle="radian" autolimits="true"/>  
+  <visual>
+    <!-- <quality shadowsize="8192"/> -->
+  </visual>
+
+  <asset>
+    <texture name="wall" file="assets/wall.png" type="2d"/>
+    <material name="wall" texture="wall"texrepeat="1 2"/>
+    <material name="black2" rgba="0.25 0.25 0.25 1"/>
+  </asset>
+
+  <default>
+    <default class="wall_collision">
+      <geom type="box" group="3"/>
+    </default>
+    <default class="rung">
+      <geom type="box" size="0.15 0.1 0.02" material="black2"/>
+    </default>
+  </default>
+
+  <worldbody>
+    <!-- <freejoint/> -->
+    <body name="back_wall" pos="-1.0 0.0 1" euler="0 0 0">
+      <geom type="box" size="1 1 0.01" euler="1.57 1.57 0" material="wall" contype="1" conaffinity="1" condim="1"/>
+    </body>
+
+    <body name="side_wall" pos="0.0 -1.0 1" euler="0 0 1.57">
+      <geom type="box" size="1 1 0.01" euler="1.57 1.57 0" material="wall" contype="1" conaffinity="1" condim="1"/>
+    </body>
+
+
+    <!-- <body name="right_wall" pos="0.3 1 1" euler = "0 0 0">
+      <geom type="box" size="1 1 0.01" euler="1.57 0 0" material="wall" contype="1" conaffinity="1" condim="1"/>
+    </body> -->
+    <!-- <body name="left_wall" pos="0.3 -0.5 1" euler = "0 0 0">
+      <geom type="box" size="1 1 0.01" euler="1.57 0 0" material="wall" contype="1" conaffinity="1" condim="1"/>
+      <body name="other_rungs" pos="0 0 0" euler="0 0 0">
+        <geom class="rung" pos="0.1 0.2 -0.4"/>
+        <geom class="rung" pos="0.1 -0.2 -0.4"/>
+      </body>
+    </body> -->
+  </worldbody>
+</mujoco>
