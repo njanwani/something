@@ -1,0 +1,63 @@
+<mujoco model="6DOF_arm">
+
+    <default>
+        <joint damping="0.1" armature="0.01"/>
+        <geom type="capsule" size="0.02 0.2" rgba="0.6 0.6 0.6 1"/>
+        <site size="0.03" rgba="0 1 0 1"/>
+    </default>
+
+    <worldbody>
+        <!-- Base -->
+        <body name="base" pos="0.5 0 1" euler="1.57 3.14 0">
+            <geom type="box" size="0.05 0.05 0.02" rgba="0.2 0.2 0.2 1"/>
+
+            <!-- Shoulder yaw -->
+            <body name="shoulder_yaw_body" pos="0 0 0">
+                <joint name="shoulder_yaw" type="hinge" axis="0 0 1"/>
+                <geom type="sphere" size="0.02" rgba="0.8 0.2 0.2 1"/>
+
+                <!-- Shoulder pitch -->
+                <body name="shoulder_pitch_body" pos="0 0 0">
+                    <joint name="shoulder_pitch" type="hinge" axis="0 1 0"/>
+                    <geom type="sphere" size="0.02" rgba="0.8 0.2 0.2 1"/>
+
+                    <!-- Shoulder roll -->
+                    <body name="shoulder_roll_body" pos="0 0 0">
+                        <joint name="shoulder_roll" type="hinge" axis="1 0 0"/>
+                        <geom fromto="0 0 0 0 0 0.15"/>
+
+                        <!-- Elbow pitch -->
+                        <body name="elbow_pitch_body" pos="0 0 0.15">
+                            <joint name="elbow_pitch" type="hinge" axis="0 1 0"/>
+                            <geom fromto="0 0 0 0 0 0.1"/>
+
+                            <!-- Wrist roll -->
+                            <body name="wrist_roll_body" pos="0 0 0.1">
+                                <joint name="wrist_roll" type="hinge" axis="0 0 1"/>
+                                <geom fromto="0 0 0 0 0 0.1"/>
+
+                                <!-- Wrist yaw -->
+                                <body name="wrist_yaw_body" pos="0 0 0.1">
+                                    <joint name="wrist_yaw" type="hinge" axis="0 1 0"/>
+                                    <geom fromto="0 0 0 0 0 0.15"/>
+
+                                    <!-- End-effector -->
+                                    <site name="ee_site" pos="0 0 0.15" type="box" size="0.05 0.05 0.05"/>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+        </body>
+    </worldbody>
+
+    <actuator>
+        <position name="shoulder_yaw_act" joint="shoulder_yaw"      kp="50" kv="3"/>
+        <position name="shoulder_pitch_act" joint="shoulder_pitch"  kp="300" kv="10"/>
+        <position name="shoulder_roll_act" joint="shoulder_roll"    kp="300" kv="10"/>
+        <position name="elbow_pitch_act" joint="elbow_pitch"        kp="300" kv="10"/>
+        <position name="wrist_roll_act" joint="wrist_roll"          kp="50" kv="3"/>
+        <position name="wrist_yaw_act" joint="wrist_yaw"            kp="300" kv="10"/>
+    </actuator>
+</mujoco>

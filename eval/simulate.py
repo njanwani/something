@@ -4,6 +4,8 @@ import numpy as np
 import time
 from pathlib import Path
 
+ARM_POS = 0.7 * (2 * np.random.random(6) - 1)
+
 # Load the Unitree G1 model
 path = Path('xmls/scene.xml')
 model = mujoco.MjModel.from_xml_string(path.read_text())
@@ -18,6 +20,7 @@ def update_pos(t, _model, _data):
     _data.qpos[32] = 1.4
     _data.qvel[:]  = np.zeros(_model.nv)
     _data.qacc[:]  = np.zeros(_model.nv)
+    _data.qpos[-6:] = ARM_POS.copy()
     data.ctrl = data.qpos[7:]
     return _data
 
