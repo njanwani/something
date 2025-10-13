@@ -208,13 +208,25 @@ if __name__ == '__main__':
     path = chain.compute_path(q, s)
     
     # Load the Unitree G1 model
-    path = Path('xmls/generic_arm/arm6DOF.xml')
+    path = Path('xmls/scene.xml')
     model = mujoco.MjModel.from_xml_string(path.read_text())
     data = mujoco.MjData(model)
 
+    print('GENERIC MJ CHAIN')
     chain = Chain.from_mujoco(
         base_body = 'base',
         end_body  = 'end_effector',
+        model=model,
+    )
+    print(chain.joint_axes)
+    print('--')
+    print(chain.link_transforms)
+    print()
+    
+    print('G1 CHAIN')
+    chain = Chain.from_mujoco(
+        base_body = 'left_shoulder_pitch_link',
+        end_body  = 'left_hand',
         model=model,
     )
     print(chain.joint_axes)

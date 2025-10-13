@@ -226,9 +226,11 @@
                             mass="0.254576" diaginertia="0.000646113 0.000559993 0.000147566"/>
                           <joint name="left_wrist_yaw_joint" axis="0 0 1" range="-1.61443 1.61443"
                             actuatorfrcrange="-5 5"/>
-                          <geom class="visual" mesh="left_wrist_yaw_link"/>
-                          <geom class="collision" mesh="left_wrist_yaw_link"/>
-                          <geom pos="0.0415 0.003 0" quat="1 0 0 0" class="visual" mesh="left_rubber_hand"/>
+                            <body name="left_hand" pos="0.0 0 0">
+                              <geom class="visual" mesh="left_wrist_yaw_link"/>
+                              <geom class="collision" mesh="left_wrist_yaw_link"/>
+                              <geom pos="0.0415 0.003 0" quat="1 0 0 0" class="visual" mesh="left_rubber_hand"/>
+                          </body>
                         </body>
                       </body>
                     </body>
