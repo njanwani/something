@@ -25,7 +25,15 @@ class Chain:
         """
         self.link_transforms = np.array(link_transforms)
         self.joint_axes      = np.array(joint_axes)
-        self.n = len(link_transforms)
+        self.n               = len(link_transforms)
+    
+    @property
+    def nq(self):
+        return self.joint_axes.shape[0]
+    
+    @property
+    def nlinks(self):
+        return self.link_transforms.shape[0]
     
     @classmethod
     def from_mujoco(cls, base_body, end_body, model):
@@ -38,12 +46,13 @@ class Chain:
         jnt_chain  = []
         bid = body_id_end
         while bid != body_id_base and bid != -1:
+            n = mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, bid)
+            print(n)
             body_chain.append(bid)
             jid = model.body_jntadr[bid]
             if jid != -1:  # body has a joint
                 jnt_chain.append(jid)
             bid = model.body_parentid[bid]
-        
         body_chain.reverse()
         jnt_chain.reverse()
         
@@ -59,7 +68,7 @@ class Chain:
             # Compute local translation from parent to this body
             parent_pos = model.body_pos[parent_id]
             body_pos = model.body_pos[body_id]
-            link_T = body_pos - parent_pos
+            link_T = parent_pos - body_pos
             
             link_transforms.append(link_T)
             joint_axes.append(axis)
@@ -68,18 +77,21 @@ class Chain:
     
     def forward_kinematics(self, q):
         """Compute 4x4 transforms of each joint frame in world coordinates."""
-        assert(len(q) == self.n)
         T = np.eye(4)
         transforms = [T.copy()]
         
-        for i in range(self.n):
+        for i in range(self.n - 1):
             R = rot_axis(self.joint_axes[i], q[i])
-            T_rot = np.eye(4)
-            T_trans = np.eye(4)
-            T_rot[:3, :3] = R
-            T_trans[:3, 3]  = self.link_transforms[i]
-            T = T @ T_rot @ T_trans
+            T_local = np.eye(4)
+            T_local[:3, :3] = R
+            T_local[:3, 3]  = self.link_transforms[i]
+            T = T @ T_local
             transforms.append(T.copy())
+        
+        T_trans = np.eye(4)
+        T_trans[:3, 3] = self.link_transforms[-1]
+        T = T @ T_trans
+        transforms.append(T.copy())
         
         return transforms
     
@@ -190,6 +202,7 @@ if __name__ == '__main__':
     links = [
         [0, 0, 1],
         [0, 0, 1],
+        [0, 0, 1],
         [0, 0, 1]
     ]
     axes = [
@@ -200,15 +213,14 @@ if __name__ == '__main__':
 
     chain = Chain(links, axes)
     q = np.zeros(3)
-    q[0] = np.pi / 2
-    q[1] = np.pi / 2
-    q[2] = np.pi / 2
+    # q[0] = np.pi / 2
+    # q[1] = np.pi / 2
+    # q[2] = np.pi / 2
     s = np.linspace(0, 1, 9)
 
     path = chain.compute_path(q, s)
     
-    # Load the Unitree G1 model
-    path = Path('xmls/scene.xml')
+    path = Path('xmls/generic_arm/arm6DOF.xml')
     model = mujoco.MjModel.from_xml_string(path.read_text())
     data = mujoco.MjData(model)
 
@@ -222,13 +234,14 @@ if __name__ == '__main__':
     print('--')
     print(chain.link_transforms)
     print()
+    # print(chain.compute_path(np.zeros(chain.nq), np.linspace(0,1,num=chain.nlinks)))
     
-    print('G1 CHAIN')
-    chain = Chain.from_mujoco(
-        base_body = 'left_shoulder_pitch_link',
-        end_body  = 'left_hand',
-        model=model,
-    )
-    print(chain.joint_axes)
-    print('--')
-    print(chain.link_transforms)
+    # print('G1 CHAIN')
+    # chain = Chain.from_mujoco(
+    #     base_body = 'left_shoulder_pitch_link',
+    #     end_body  = 'left_hand',
+    #     model=model,
+    # )
+    # print(chain.joint_axes)
+    # print('--')
+    # print(chain.link_transforms)
