@@ -40,9 +40,9 @@
                                 <body name="wrist_yaw_body" pos="0 0 0.1">
                                     <joint name="wrist_yaw" type="hinge" axis="0 1 0"/>
                                     <geom fromto="0 0 0 0 0 0.15"/>
-
-                                    <!-- End-effector -->
-                                    <site name="ee_site" pos="0 0 0.15" type="box" size="0.05 0.05 0.05"/>
+                                    <body name="end_effector" pos="0 0 0.15">
+                                        <site name="ee_site" pos="0 0 0.0" type="box" size="0.05 0.05 0.05"/>
+                                    </body>
                                 </body>
                             </body>
                         </body>

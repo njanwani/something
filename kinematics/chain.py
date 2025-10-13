@@ -1,4 +1,6 @@
 import numpy as np
+import mujoco
+from pathlib import Path
 
 def rot_axis(axis, angle):
     """Return 3x3 rotation matrix for rotation about 'axis' by 'angle'."""
@@ -25,6 +27,44 @@ class Chain:
         self.joint_axes      = np.array(joint_axes)
         self.n = len(link_transforms)
     
+    @classmethod
+    def from_mujoco(cls, base_body, end_body, model):
+        """Build Chain from a MuJoCo model between two bodies."""
+        body_id_base = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, base_body)
+        body_id_end  = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, end_body)
+        
+        # Walk up the tree from end_body to base_body
+        body_chain = []
+        jnt_chain  = []
+        bid = body_id_end
+        while bid != body_id_base and bid != -1:
+            body_chain.append(bid)
+            jid = model.body_jntadr[bid]
+            if jid != -1:  # body has a joint
+                jnt_chain.append(jid)
+            bid = model.body_parentid[bid]
+        
+        body_chain.reverse()
+        jnt_chain.reverse()
+        
+        link_transforms = []
+        joint_axes = []
+        
+        # Compute relative transforms and joint axes in local frames
+        for jid in jnt_chain:
+            axis = model.jnt_axis[jid]
+            body_id = model.jnt_bodyid[jid]
+            parent_id = model.body_parentid[body_id]
+            
+            # Compute local translation from parent to this body
+            parent_pos = model.body_pos[parent_id]
+            body_pos = model.body_pos[body_id]
+            link_T = body_pos - parent_pos
+            
+            link_transforms.append(link_T)
+            joint_axes.append(axis)
+        
+        return cls(link_transforms, joint_axes)
     
     def forward_kinematics(self, q):
         """Compute 4x4 transforms of each joint frame in world coordinates."""
@@ -166,4 +206,17 @@ if __name__ == '__main__':
     s = np.linspace(0, 1, 9)
 
     path = chain.compute_path(q, s)
-    print(np.round(path, 2))
+    
+    # Load the Unitree G1 model
+    path = Path('xmls/generic_arm/arm6DOF.xml')
+    model = mujoco.MjModel.from_xml_string(path.read_text())
+    data = mujoco.MjData(model)
+
+    chain = Chain.from_mujoco(
+        base_body = 'base',
+        end_body  = 'end_effector',
+        model=model,
+    )
+    print(chain.joint_axes)
+    print('--')
+    print(chain.link_transforms)
