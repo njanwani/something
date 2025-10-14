@@ -181,8 +181,9 @@
             <geom pos="0.0039635 0 -0.044" quat="1 0 0 0" class="visual" material="black" mesh="head_link"/>
             <geom pos="0.0039635 0 -0.044" quat="1 0 0 0" class="collision" material="black" mesh="head_link"/>
             <site name="imu_in_torso" pos="-0.03959 -0.00224 0.14792" size="0.01"/>
-            <body name="left_shoulder_pitch_link" pos="0.0039563 0.10022 0.24778"
+            <body name="shoulder_start" pos="0.0039563 0.10022 0.24778"
               quat="0.990264 0.139201 1.38722e-05 -9.86868e-05">
+            <body name="left_shoulder_pitch_link">
               <inertial pos="0 0.035892 -0.011628" quat="0.654152 0.0130458 -0.326267 0.68225" mass="0.718"
                 diaginertia="0.000465864 0.000432842 0.000406394"/>
               <joint name="left_shoulder_pitch_joint" axis="0 1 0" range="-3.0892 2.6704" actuatorfrcrange="-25 25"/>
@@ -226,16 +227,17 @@
                             mass="0.254576" diaginertia="0.000646113 0.000559993 0.000147566"/>
                           <joint name="left_wrist_yaw_joint" axis="0 0 1" range="-1.61443 1.61443"
                             actuatorfrcrange="-5 5"/>
-                            <body name="left_hand" pos="0.0 0 0">
-                              <geom class="visual" mesh="left_wrist_yaw_link"/>
-                              <geom class="collision" mesh="left_wrist_yaw_link"/>
-                              <geom pos="0.0415 0.003 0" quat="1 0 0 0" class="visual" mesh="left_rubber_hand"/>
-                          </body>
+                            <geom class="visual" mesh="left_wrist_yaw_link"/>
+                            <geom class="collision" mesh="left_wrist_yaw_link"/>
+                            <body name="left_hand"pos="0.0415 0.003 0" quat="1 0 0 0" >
+                              <geom class="visual" mesh="left_rubber_hand"/>
+                            </body>
                         </body>
                       </body>
                     </body>
                   </body>
                 </body>
+              </body>
               </body>
             </body>
             <body name="right_shoulder_pitch_link" pos="0.0039563 -0.10021 0.24778"

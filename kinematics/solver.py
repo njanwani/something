@@ -32,18 +32,20 @@ def imitate(
             num    = density,
             alpha  = alpha
         )[0]
+    print('Initial error', cost(q_init))
         
     sol = optimize.minimize(
         fun    = cost,
         x0     = q_init,
         method = 'Powell',
-        options = dict(maxiter=500, xtol=1e-3, ftol=1e-3)
+        options = dict(maxiter=500, xtol=1e-5, ftol=1e-5)
     )
     return sol
 
 if __name__ == '__main__':
     # 3-link chain: each link 1m, each axis z, y, x
     links = [
+        [0, 0, 1],
         [0, 0, 1],
         [0, 0, 1],
         [0, 0, 1]
@@ -59,7 +61,8 @@ if __name__ == '__main__':
         [0, 0, 1],
         [0, 0, 1],
         [0, 0, 0.5],
-        [0, 0, 0.5]
+        [0, 0, 0.5],
+        [0, 0, 1]
     ]
     axes = [
         [0, 1, 0],
@@ -69,9 +72,10 @@ if __name__ == '__main__':
     ]
     actual_chain = Chain(links, axes)
     
-    reference_q = np.zeros(3)
+    reference_q    = np.zeros(3)
     reference_q[1] = np.pi / 2
-    actual_q    = np.ones(4) * 0.9
+    actual_q       = np.ones(4) * 0.9
+    
     s = np.linspace(0, 1, 9)
     
     sol = imitate(

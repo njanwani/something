@@ -1,6 +1,8 @@
 import numpy as np
 import mujoco
 from pathlib import Path
+from scipy.spatial.transform import Rotation as R
+
 
 def rot_axis(axis, angle):
     """Return 3x3 rotation matrix for rotation about 'axis' by 'angle'."""
@@ -26,6 +28,7 @@ class Chain:
         self.link_transforms = np.array(link_transforms)
         self.joint_axes      = np.array(joint_axes)
         self.n               = len(link_transforms)
+        self.base_T          = np.eye(4)
     
     @property
     def nq(self):
@@ -42,55 +45,73 @@ class Chain:
         body_id_end  = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, end_body)
         
         # Walk up the tree from end_body to base_body
-        body_chain = []
-        jnt_chain  = []
-        bid = body_id_end
-        while bid != body_id_base and bid != -1:
-            n = mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, bid)
-            print(n)
-            body_chain.append(bid)
-            jid = model.body_jntadr[bid]
-            if jid != -1:  # body has a joint
-                jnt_chain.append(jid)
-            bid = model.body_parentid[bid]
-        body_chain.reverse()
-        jnt_chain.reverse()
-        
         link_transforms = []
         joint_axes = []
-        
-        # Compute relative transforms and joint axes in local frames
-        for jid in jnt_chain:
-            axis = model.jnt_axis[jid]
-            body_id = model.jnt_bodyid[jid]
-            parent_id = model.body_parentid[body_id]
+        child_id = body_id_end
+        while child_id != body_id_base and child_id != -1:
+            n = mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, child_id)
+            print(n)
             
-            # Compute local translation from parent to this body
-            parent_pos = model.body_pos[parent_id]
-            body_pos = model.body_pos[body_id]
-            link_T = parent_pos - body_pos
+            # Compute link translation
+            parent_id = model.body_parentid[child_id]
             
-            link_transforms.append(link_T)
-            joint_axes.append(axis)
+            T_local = np.eye(4)
+            parent2child_translation = model.body_pos[child_id]
+            w, x, y, z               = model.body_quat[child_id]
+            parent2child_rotation    = R.from_quat(np.array([x, y, z, w])).as_matrix()
+            T_local[:3, :3] = parent2child_rotation
+            T_local[:3, 3]  = parent2child_translation
+            
+            link_transforms.append(T_local)
+            
+            jid = model.body_jntadr[child_id]
+            if jid != -1:  # body has a joint
+                axis = model.jnt_axis[jid]
+                joint_axes.append(axis)
+            
+            child_id = parent_id
         
-        return cls(link_transforms, joint_axes)
+        link_transforms = np.array(link_transforms)[::-1]
+        joint_axes      = np.array(joint_axes)[::-1]
+        
+        print('FINDING BASE TRANSFORM...')
+        T = np.eye(4)
+        child_id = body_id_base
+        while child_id != 0:
+            n = mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, child_id)
+            
+            T_local = np.eye(4)
+            parent2child_translation = model.body_pos[child_id]
+            w, x, y, z               = model.body_quat[child_id]
+            parent2child_rotation    = R.from_quat(np.array([x, y, z, w])).as_matrix()
+            T_local[:3, :3] = parent2child_rotation
+            T_local[:3, 3]  = parent2child_translation
+            
+            T = T_local @ T
+            
+            parent_id = model.body_parentid[child_id]
+            print(parent_id, child_id, n)
+            child_id = parent_id
+        
+        chain = cls(link_transforms, joint_axes)
+        chain.base_T = T# np.linalg.inv(T)
+        return chain
     
     def forward_kinematics(self, q):
         """Compute 4x4 transforms of each joint frame in world coordinates."""
-        T = np.eye(4)
+        T = self.base_T
         transforms = [T.copy()]
         
         for i in range(self.n - 1):
             R = rot_axis(self.joint_axes[i], q[i])
-            T_local = np.eye(4)
-            T_local[:3, :3] = R
-            T_local[:3, 3]  = self.link_transforms[i]
-            T = T @ T_local
+            T_local = self.link_transforms[i]
+            T_joint = np.eye(4)
+            T_joint[:3, :3] = R
+            T = T @ T_local @ T_joint
             transforms.append(T.copy())
         
-        T_trans = np.eye(4)
-        T_trans[:3, 3] = self.link_transforms[-1]
-        T = T @ T_trans
+        T_last_link = self.link_transforms[-1]
+        T = T @ T_last_link
         transforms.append(T.copy())
         
         return transforms
@@ -171,7 +192,7 @@ def log_SE3_batch(Ts, reg=0.01):
     V_inv[nonzero] += term[nonzero] * (wx[nonzero] @ wx[nonzero])
     
     v = np.einsum('...ij,...j->...i', V_inv, ps)
-    return np.concatenate([v, ws], axis=-1)
+    return np.concatenate([v, 0*ws], axis=-1)
 
 
 def compute_path_error(path1, path2):
@@ -220,7 +241,7 @@ if __name__ == '__main__':
 
     path = chain.compute_path(q, s)
     
-    path = Path('xmls/generic_arm/arm6DOF.xml')
+    path = Path('xmls/scene.xml')
     model = mujoco.MjModel.from_xml_string(path.read_text())
     data = mujoco.MjData(model)
 
@@ -234,7 +255,9 @@ if __name__ == '__main__':
     print('--')
     print(chain.link_transforms)
     print()
-    # print(chain.compute_path(np.zeros(chain.nq), np.linspace(0,1,num=chain.nlinks)))
+    q = np.zeros(chain.nq)
+    q[2] = np.pi / 2
+    print(np.round(chain.compute_path(q, np.linspace(0,1,num=chain.nlinks)), 2))
     
     # print('G1 CHAIN')
     # chain = Chain.from_mujoco(

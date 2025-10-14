@@ -1,5 +1,6 @@
 <mujoco model="g1_29dof_rev_1_0 scene">
   <include file="xmls/unitree_g1/g1.xml"/>
+  <!-- <include file="xmls/humanoid/humanoid.xml"/> -->
   <include file="xmls/table/table.xml"/>
   <include file="xmls/wall/wall.xml"/>
   <include file="xmls/generic_arm/arm6DOF.xml"/>
@@ -24,6 +25,10 @@
 
   <worldbody>
     <!-- <light pos="1 0 35" dir="0.1 0.1 -1" directional="false"/> -->
+    <site name="track"  pos="0.0 0.5 0.0" type="sphere" size="0.05" rgba="1 1 1 1"/>
+    <site name="r_arm0" pos="0.0 0.6 0.0" type="sphere" size="0.02" rgba="1 0 0 1"/>
+    <site name="r_arm1" pos="0.0 0.7 0.0" type="sphere" size="0.02" rgba="0 1 0 1"/>
+    <site name="r_arm2" pos="0.0 0.8 0.0" type="sphere" size="0.02" rgba="0 0 1 1"/>
     <light name="headlight" pos="1 1 10" dir="-1 -1 -10" diffuse="1 1 1" specular="0.3 0.3 0.3" directional="false"/>
     <geom name="stone_floor" size="0 0 0.01" type="plane" material="stone_floor"/>
   </worldbody>
