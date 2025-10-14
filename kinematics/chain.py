@@ -116,12 +116,8 @@ class Chain:
         
         return transforms
     
-    
-    def compute_path(self, q, s):
-        """Return SE(3) transforms along the chain at fractions s∈[0,1],
-        with constant rotation along each link.
-        """
-        transforms = self.forward_kinematics(q)
+    @classmethod
+    def compute_path_from_transforms(cls, transforms, s):
         joint_positions = np.array([T[:3, 3] for T in transforms])
         
         # Compute cumulative distances
@@ -135,7 +131,7 @@ class Chain:
         
         for L in target_lengths:
             i = np.searchsorted(cum_lengths, L) - 1
-            i = np.clip(i, 0, self.n - 1)
+            i = np.clip(i, 0, len(joint_positions) - 1)
             t = (L - cum_lengths[i]) / (cum_lengths[i+1] - cum_lengths[i] + 1e-8)
             
             # Linear position interpolation along link i
@@ -153,6 +149,19 @@ class Chain:
             path_transforms.append(T_interp)
         
         return np.array(path_transforms)
+    
+    def compute_path(self, q, s):
+        """Return SE(3) transforms along the chain at fractions s∈[0,1],
+        with constant rotation along each link.
+        """
+        transforms = self.forward_kinematics(q)
+        return Chain.compute_path_from_transforms(transforms, s)
+    
+    @classmethod
+    def path_from_sites(cls, site_list):
+        transforms = np.vstack([np.eye(4) for _ in range(len(site_list))])
+        transforms[:, :3, 3] = site_list
+        return Chain.compute_path_from_transforms(transforms) 
     
 def log_SO3_batch(Rs):
     """Vectorized log map for SO(3) rotation matrices of shape (..., 3, 3)."""

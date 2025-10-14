@@ -2,6 +2,7 @@ import numpy as np
 from kinematics.chain import Chain, compute_path_error
 from scipy import optimize
 
+# TODO: change to add in reference as task positions
 def overall_error(chain1: Chain, chain2: Chain, q1, q2, num, alpha):
     s = np.linspace(0, 1, num=num)
     path1 = chain1.compute_path(q1, s)
