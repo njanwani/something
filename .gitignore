@@ -209,3 +209,5 @@ __marimo__/
 
 .DS_Store
 MUJOCO_LOG.TXT
+yolov8l-pose.pt
+yolov8n-pose.pt
