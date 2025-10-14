@@ -101,8 +101,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
         for idx, site in enumerate(site_names):
             site_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_SITE, site)
             model.site_pos[site_id] = np.hstack([0, po2D.left_arm[idx]])
-        # for i in range(3):
-        #     model.site_pos[i + 1] = np.hstack([0, po2D.left_arm[i]])
+
         
         mujoco.mj_forward(model, data)
 
