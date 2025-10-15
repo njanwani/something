@@ -1,18 +1,54 @@
-# from ultralytics import settings
-# print(settings)
-# quit()
 from ultralytics import YOLO
 import cv2
 import numpy as np
+import torch
 
 
 class PoseObserver2D:
     
-    def __init__(self, norm_length):  
+    def __init__(self, norm_length, model='accurate'):  
         self.left_arm_pxls = np.zeros(3)
         self.right_arm_pxls = np.zeros(3)      
         self.norm_length = norm_length
-        self.model = YOLO("yolov8l-pose.pt")
+        # Choose model file
+        model_path = "yolov8l-pose.pt" if model == 'accurate' else "yolov8n-pose.pt"
+
+        # Detect best available device. On Apple Silicon prefer 'mps'. Otherwise prefer 'cuda' when available.
+        device = 'cpu'
+        try:
+            if torch.cuda.is_available():
+                device = 'cuda'
+            else:
+                # torch.backends.mps may not exist on older torch versions
+                if getattr(torch.backends, 'mps', None) is not None and torch.backends.mps.is_available():
+                    device = 'mps'
+        except Exception:
+            # If any unexpected error happens while checking backends, fall back to cpu
+            device = 'cpu'
+
+        # Load the model (do not pass device to constructor because some ultralytics
+        # versions do not accept a 'device' kwarg). After loading, try to move it to
+        # the selected device using common interfaces and fall back to CPU on failure.
+        try:
+            self.model = YOLO(model_path)
+            moved = False
+            if device != 'cpu':
+                try:
+                    # Preferred: if model has a .to() method (nn.Module-like)
+                    if hasattr(self.model, 'to'):
+                        self.model.to(device)
+                        moved = True
+                    # ultralytics YOLO sometimes exposes a .model attribute
+                    elif hasattr(self.model, 'model') and hasattr(self.model.model, 'to'):
+                        self.model.model.to(device)
+                        moved = True
+                except Exception as e:
+                    print(f"Warning: attempted to move model to '{device}' but failed: {e}")
+
+            print(f"Loaded YOLO model '{model_path}' (requested device: {device}, moved: {moved})")
+        except Exception as e:
+            print(f"Error: failed to load YOLO model '{model_path}': {e}")
+            raise
         self.cap = cv2.VideoCapture(0)
         if not self.cap.isOpened():
             print("Error: Could not open camera.")
@@ -49,56 +85,3 @@ class PoseObserver2D:
     @property
     def right_arm(self):
         return self.arm(self.right_arm_pxls)
-
-
-if __name__ == '__main__':
-    
-    # Load YOLOv8 pose model
-    model = YOLO("yolov8l-pose.pt")
-
-    # Open webcam
-    cap = cv2.VideoCapture(0)
-    if not cap.isOpened():
-        print("Error: Could not open camera.")
-        exit()
-
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            print("Error: Failed to capture frame.")
-            break
-
-        # Run pose estimation
-        results = model(frame, verbose=False)
-
-        # Draw annotated results
-        annotated_frame = results[0].plot()
-
-        # Get keypoints (if any person detected)
-        keypoints = results[0].keypoints
-        if keypoints is not None and len(keypoints.xy) > 0:
-            # Get first person (index 0)
-            person_kpts = keypoints.xy[0].cpu().numpy()  # shape (17, 2)
-
-            # Arm keypoints (indices)
-            left_arm_idxs = [5, 7, 9]
-            right_arm_idxs = [6, 8, 10]
-
-            left_arm = person_kpts[left_arm_idxs]
-            right_arm = person_kpts[right_arm_idxs]
-
-            # Draw arm points on frame (optional)
-            for (x, y) in np.vstack([left_arm, right_arm]):
-                cv2.circle(annotated_frame, (int(x), int(y)), 15, (0, 255, 255), -1)
-
-            # Print coordinates (optional)
-            print("Left Arm:", left_arm)
-            print("Right Arm:", right_arm)
-
-        cv2.imshow("YOLOv8 Pose Estimation (Arms Highlighted)", annotated_frame)
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-    cap.release()
-    cv2.destroyAllWindows()

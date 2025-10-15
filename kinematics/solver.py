@@ -50,7 +50,6 @@ def imitate(
             density,
             alpha
         )[0]
-    print('Initial error', cost(q_init))
         
     sol = optimize.minimize(
         fun    = cost,

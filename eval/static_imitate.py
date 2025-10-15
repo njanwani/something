@@ -11,35 +11,21 @@ import numpy as np
 
 ARM_POS = (2 * np.random.random(6) - 1)
 G1_LEFT_ARM_IDX = np.arange(15, 22) + 7
-GENERIC_ARM_IDX = np.arange(29, 35) + 7
 
 # Load the Unitree G1 model
 path = Path('xmls/scene.xml')
 model = mujoco.MjModel.from_xml_string(path.read_text())
 data = mujoco.MjData(model)
 
-def make_chains():
-    generic = Chain.from_mujoco(
-        base_body = 'base',
-        end_body  = 'end_effector',
-        model=model,
-    )
-
-    g1_left = Chain.from_mujoco(
-        base_body = 'shoulder_start',
-        end_body  = 'left_hand',
-        model=model,
-    )
-    
-    return generic, g1_left
-
 HZ = 50
 FLOATING_XYZ = np.array([0.0, 0.0, 0.793])
 FLOATING_QUAT = np.array([1.0, 0.0, 0.0, 0.0])
 FLOATING_FRAME = np.hstack([FLOATING_XYZ, FLOATING_QUAT])
-generic_chain, g1_chain = make_chains()
-generic_q = ARM_POS
-data.qpos[GENERIC_ARM_IDX] = generic_q.copy()
+g1_chain = Chain.from_mujoco(
+    base_body = 'shoulder_start',
+    end_body  = 'left_hand',
+    model=model,
+)
 
 imitate_q = np.zeros(7) #sol.x
 data.qpos[G1_LEFT_ARM_IDX] = imitate_q.copy()
@@ -48,7 +34,7 @@ s = np.linspace(0, 1, 7)
 sim_start = time.time()
 i = 0
 
-po2D = PoseObserver2D(0.4)
+po2D = PoseObserver2D(0.4, 'accurate')
 with mujoco.viewer.launch_passive(model, data) as viewer:
     while viewer.is_running():
         po2D.read_pose()
@@ -70,7 +56,6 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
             data.qpos[7:] = 0.0
             data.qvel = 0.0
             data.qacc = 0.0
-            data.qpos[GENERIC_ARM_IDX] = generic_q.copy()
             data.qpos[G1_LEFT_ARM_IDX] = imitate_q.copy()
         
         site_names = ["r_arm0", "r_arm1", "r_arm2"]

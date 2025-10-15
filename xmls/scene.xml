@@ -3,7 +3,7 @@
   <!-- <include file="xmls/humanoid/humanoid.xml"/> -->
   <include file="xmls/table/table.xml"/>
   <include file="xmls/wall/wall.xml"/>
-  <include file="xmls/generic_arm/arm6DOF.xml"/>
+  <!-- <include file="xmls/generic_arm/arm6DOF.xml"/> -->
   <!-- <include file="models/mug.xml"/> -->
 
   <statistic center="1 -0.8 1.1" extent=".35"/>
