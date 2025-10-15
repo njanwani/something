@@ -39,51 +39,29 @@ FLOATING_QUAT = np.array([1.0, 0.0, 0.0, 0.0])
 FLOATING_FRAME = np.hstack([FLOATING_XYZ, FLOATING_QUAT])
 generic_chain, g1_chain = make_chains()
 generic_q = ARM_POS
-# generic_q[0] = np.pi / 2
-# generic_q[3] = np.pi / 2
-# generic_q[4] = -np.pi / 2
-# generic_q[5] = np.pi / 2
 data.qpos[GENERIC_ARM_IDX] = generic_q.copy()
-# # quit()
+
 imitate_q = np.zeros(7) #sol.x
-# imitate_q = sol.x
-# imitate_q[3] = np.pi / 2
-# imitate_q = np.random.random(6) * 2 - 1
 data.qpos[G1_LEFT_ARM_IDX] = imitate_q.copy()
 
-sol = imitate(
-    reference_chain = generic_chain,
-    reference_q     = data.qpos[GENERIC_ARM_IDX],
-    actual_chain    = g1_chain,
-    q_init          = data.qpos[G1_LEFT_ARM_IDX]
-)
-print(sol)
-imitate_q = sol.x
-data.qpos[G1_LEFT_ARM_IDX] = imitate_q.copy()
-
-s = np.linspace(0, 1, 50)
-generic_path = generic_chain.compute_path(data.qpos[GENERIC_ARM_IDX], s)
-g1_path      = g1_chain.compute_path(data.qpos[G1_LEFT_ARM_IDX], s)
-# print(np.round(generic_path, 2))
-# print('-----')
-# print(np.round(g1_path, 2))
-# site_pos = generic_path[-1, :3, 3]
-site_pos = g1_path[-1, :3, 3]
-# site_pos = g1_chain.base_T[:3, 3]
-# site_pos = generic_chain.base_T[:3, 3]
-
+s = np.linspace(0, 1, 7)
 sim_start = time.time()
-# Simple walking-ish gait: sinusoidal hip/knee swings
 i = 0
 
-po2D = PoseObserver2D(0.5)
+po2D = PoseObserver2D(0.4)
 with mujoco.viewer.launch_passive(model, data) as viewer:
     while viewer.is_running():
         po2D.read_pose()
-        print(po2D.left_arm)
-        i += 1
-        if i >= len(generic_path):
-            i = 0
+        left_arm_sites = np.concatenate(
+            [np.zeros((3, 1)), po2D.left_arm], axis=1
+        ) + np.array([0.0, 0.1, 1.1])
+        sol = imitate(
+            reference_sites = left_arm_sites,
+            robot_chain     = g1_chain,
+            q_init          = data.qpos[G1_LEFT_ARM_IDX],
+            density=10
+        )
+        imitate_q = sol.x
         time_start = data.time
         real_time  = time.time()
         while data.time - time_start < 1.0 / HZ:
@@ -94,13 +72,11 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
             data.qacc = 0.0
             data.qpos[GENERIC_ARM_IDX] = generic_q.copy()
             data.qpos[G1_LEFT_ARM_IDX] = imitate_q.copy()
-        # model.site_pos[0] = g1_path[i, :3, 3].copy()
-        # model.site_pos[0] = g1_chain.base_T[:3, 3]
         
         site_names = ["r_arm0", "r_arm1", "r_arm2"]
         for idx, site in enumerate(site_names):
             site_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_SITE, site)
-            model.site_pos[site_id] = np.hstack([0, po2D.left_arm[idx]])
+            model.site_pos[site_id] = left_arm_sites[idx]
 
         
         mujoco.mj_forward(model, data)

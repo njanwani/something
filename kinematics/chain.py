@@ -158,10 +158,13 @@ class Chain:
         return Chain.compute_path_from_transforms(transforms, s)
     
     @classmethod
-    def path_from_sites(cls, site_list):
-        transforms = np.vstack([np.eye(4) for _ in range(len(site_list))])
+    def compute_path_from_sites(cls, site_list, s):
+        transforms = np.array([np.eye(4) for _ in range(len(site_list))]).reshape(
+            len(site_list), 4, 4
+        )
+        site_list = np.array(site_list)
         transforms[:, :3, 3] = site_list
-        return Chain.compute_path_from_transforms(transforms) 
+        return Chain.compute_path_from_transforms(transforms, s) 
     
 def log_SO3_batch(Rs):
     """Vectorized log map for SO(3) rotation matrices of shape (..., 3, 3)."""

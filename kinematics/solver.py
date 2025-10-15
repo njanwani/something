@@ -3,13 +3,32 @@ from kinematics.chain import Chain, compute_path_error
 from scipy import optimize
 
 # TODO: change to add in reference as task positions
-def overall_error(chain1: Chain, chain2: Chain, q1, q2, num, alpha):
-    s = np.linspace(0, 1, num=num)
-    path1 = chain1.compute_path(q1, s)
-    path2 = chain2.compute_path(q2, s)
+def overall_imitation_error(
+    reference_sites: np.ndarray,
+    robot_chain: Chain,
+    robot_q: np.ndarray,
+    num: int,
+    alpha: float = 0
+):
+    """Computes the overall imitation error for a robot kinematic chain with 
+    respect to a set of reference positions in task space.
 
-    pose_error = np.mean(compute_path_error(path1, path2))
-    ee_error   = compute_path_error(path1[[-1]], path2[[-1]])
+    Args:
+        reference_sites (np.ndarray): a list of reference positions (x,y,z)
+        robot_chain (Chain): robot kinematic chain
+        robot_q (np.ndarray): current robot joint configuration
+        num (int): # of points sampled from the reference/robot trajectory 
+        alpha (float, optional): Weight on imitating the end effector. Defaults to 0.
+
+    Returns:
+        tuple (float, dict): the error and a dict of each error component
+    """
+    s = np.linspace(0, 1, num=num)
+    reference_path = Chain.compute_path_from_sites(reference_sites, s)
+    robot_path = robot_chain.compute_path(robot_q, s)
+
+    pose_error = np.mean(compute_path_error(reference_path, robot_path))
+    ee_error   = compute_path_error(reference_path[[-1]], robot_path[[-1]])
     error = pose_error + alpha * ee_error
     return error, {
         'pose_error': pose_error,
@@ -17,21 +36,19 @@ def overall_error(chain1: Chain, chain2: Chain, q1, q2, num, alpha):
     }
 
 def imitate(
-    reference_chain: Chain,
-    reference_q: np.ndarray,
-    actual_chain: Chain, 
+    reference_sites: Chain,
+    robot_chain: np.ndarray,
     q_init: np.ndarray,
     density=100,
     alpha=0.0
 ):
     def cost(x: np.ndarray):
-        return overall_error(
-            chain1 = reference_chain,
-            chain2 = actual_chain,
-            q1     = reference_q,
-            q2     = x,
-            num    = density,
-            alpha  = alpha
+        return overall_imitation_error(
+            reference_sites,
+            robot_chain,
+            x,
+            density,
+            alpha
         )[0]
     print('Initial error', cost(q_init))
         
@@ -80,8 +97,7 @@ if __name__ == '__main__':
     s = np.linspace(0, 1, 9)
     
     sol = imitate(
-        reference_chain,
-        reference_q,
+        reference_chain.compute_path(reference_q, s),
         actual_chain,
         actual_q,
     )
