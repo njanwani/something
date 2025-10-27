@@ -55,7 +55,7 @@ def imitate(
         fun    = cost,
         x0     = q_init,
         method = 'Powell',
-        options = dict(maxiter=500, xtol=1e-5, ftol=1e-5)
+        options = dict(maxiter=500, xtol=1e-2, ftol=1e-2)
     )
     return sol
 
