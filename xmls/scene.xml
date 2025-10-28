@@ -1,8 +1,9 @@
 <mujoco model="g1_29dof_rev_1_0 scene">
+  <include file="xmls/humanoid/humanoid.xml"/>
   <include file="xmls/unitree_g1/g1.xml"/>
   <include file="xmls/table/table.xml"/>
   <include file="xmls/wall/wall.xml"/>
-  <!-- <include file="xmls/humanoid/humanoid.xml"/> -->
+  
   <!-- <include file="models/mug.xml"/> -->
 
   <statistic center="1 -0.8 1.1" extent=".35"/>

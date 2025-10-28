@@ -2,12 +2,12 @@ import mujoco
 import mujoco_viewer
 import numpy as np
 
-# -----------------------------------------------------
-# Load model
-# -----------------------------------------------------
-model = mujoco.MjModel.from_xml_path("something/xmls/humanoid/humanoid.xml")
-data = mujoco.MjData(model)
-viewer = mujoco_viewer.MujocoViewer(model, data)
+# # -----------------------------------------------------
+# # Load model
+# # -----------------------------------------------------
+# model = mujoco.MjModel.from_xml_path("xmls/humanoid/humanoid.xml")
+# data = mujoco.MjData(model)
+# viewer = mujoco_viewer.MujocoViewer(model, data)
 
 hz = 50
 dt = 1.0 / hz
@@ -155,7 +155,7 @@ def interpolate_pose(t):
     pos, yaw = keyframes[-1][1], keyframes[-1][2]
     return pos, yaw_to_quat(yaw)
 
-def animate_arms(t, qpos):
+def point_motion(t, qpos):
     """Handles both left default and right arm pointing animation."""
     # --- Left arm always default ---
     qpos[shoulder1_l] = left_default["shoulder1"]
@@ -196,27 +196,27 @@ def animate_arms(t, qpos):
 
     return qpos
 
-# -----------------------------------------------------
-# Simulation loop
-# -----------------------------------------------------
-while viewer.is_alive:
-    t = data.time
-    pos, quat = interpolate_pose(t)
+# # -----------------------------------------------------
+# # Simulation loop
+# # -----------------------------------------------------
+# while viewer.is_alive:
+#     t = data.time
+#     pos, quat = interpolate_pose(t)
 
-    # Reset base
-    data.qpos[:] = 0.0
-    data.qvel[:] = 0.0
+#     # Reset base
+#     data.qpos[:] = 0.0
+#     data.qvel[:] = 0.0
 
-    # Base translation + orientation
-    data.qpos[0:2] = pos
-    data.qpos[2] = 1.5
-    data.qpos[3:7] = quat
+#     # Base translation + orientation
+#     data.qpos[0:2] = pos
+#     data.qpos[2] = 1.5
+#     data.qpos[3:7] = quat
 
-    # Arm animation
-    data.qpos = animate_arms(t, data.qpos.copy())
+#     # Arm animation
+#     data.qpos = point_motion(t, data.qpos.copy())
 
-    # Step + render
-    mujoco.mj_step(model, data)
-    viewer.render()
+#     # Step + render
+#     mujoco.mj_step(model, data)
+#     viewer.render()
 
-viewer.close()
+# viewer.close()

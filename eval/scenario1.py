@@ -2,12 +2,12 @@ import mujoco
 import mujoco_viewer
 import numpy as np
 
-# -----------------------------------------------------
-# Load model
-# -----------------------------------------------------
-model = mujoco.MjModel.from_xml_path("something/xmls/humanoid/humanoid.xml")
-data = mujoco.MjData(model)
-viewer = mujoco_viewer.MujocoViewer(model, data)
+# # -----------------------------------------------------
+# # Load model
+# # -----------------------------------------------------
+# model = mujoco.MjModel.from_xml_path("xmls/humanoid/humanoid.xml")
+# data = mujoco.MjData(model)
+# viewer = mujoco_viewer.MujocoViewer(model, data)
 
 hz = 50
 dt = 1.0 / hz
@@ -200,27 +200,27 @@ def wave_motion(t, qpos):
 
     return qpos
 
-# -----------------------------------------------------
-# Simulation loop
-# -----------------------------------------------------
-while viewer.is_alive:
-    t = data.time
-    pos, quat = interpolate_pose(t)
+# # -----------------------------------------------------
+# # Simulation loop
+# # -----------------------------------------------------
+# while viewer.is_alive:
+#     t = data.time
+#     pos, quat = interpolate_pose(t)
 
-    # Reset to neutral pose
-    data.qpos[:] = 0.0
-    data.qvel[:] = 0.0
+#     # Reset to neutral pose
+#     data.qpos[:] = 0.0
+#     data.qvel[:] = 0.0
 
-    # Base translation and orientation
-    data.qpos[0:2] = pos
-    data.qpos[2] = 1.5
-    data.qpos[3:7] = quat
+#     # Base translation and orientation
+#     data.qpos[0:2] = pos
+#     data.qpos[2] = 1.5
+#     data.qpos[3:7] = quat
 
-    # Apply waving if in wave window
-    data.qpos = wave_motion(t, data.qpos.copy())
+#     # Apply waving if in wave window
+#     data.qpos = wave_motion(t, data.qpos.copy())
 
-    # Step simulation
-    mujoco.mj_step(model, data)
-    viewer.render()
+#     # Step simulation
+#     mujoco.mj_step(model, data)
+#     viewer.render()
 
-viewer.close()
+# viewer.close()
