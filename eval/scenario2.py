@@ -64,63 +64,57 @@ keyframes.append((t, np.array([3.0, 0.0]), 0.0))
 t += turn_duration
 keyframes.append((t, np.array([3.0, 0.0]), np.pi / 2))
 
-# Pause while waving (3s)
-t += pause_duration
-keyframes.append((t, np.array([3.0, 0.0]), np.pi / 2))
+# Pause while pointing and holding (≈3s total)
+point_start = t
+point_end = t + 3.0 / speed_scale  # total time for point + hold + return
+keyframes.append((point_end, np.array([3.0, 0.0]), np.pi / 2))
+
+# Wait 1s before turning east again
+t = point_end + 1.0 / speed_scale
 
 # Turn east again
 t += turn_duration
 keyframes.append((t, np.array([3.0, 0.0]), 0.0))
 
-# Move east (3s)
+# Continue moving east and north as before
 t += move_duration
 keyframes.append((t, np.array([6.0, 0.0]), 0.0))
 
-# Turn north
 t += turn_duration
 keyframes.append((t, np.array([6.0, 0.0]), np.pi / 2))
 
-# Move north (6s)
 t += 2 * move_duration
 keyframes.append((t, np.array([6.0, 6.0]), np.pi / 2))
 
 # -----------------------------------------------------
-# Waving parameters (fixed to start *after* turn completes)
-# -----------------------------------------------------
-turn_buffer = 0.2 / speed_scale           # short delay after turn before waving
-pre_wave_duration = 0.3 / speed_scale     # smooth lift before waving
-post_wave_duration = 0.3 / speed_scale    # smooth return after waving
-wave_duration = 2.0 / speed_scale         # duration of actual waving
-
-wave_freq = 4.0                           # waves per second
-wave_amp = 0.5                            # radians amplitude
-
-# Start waving *after* turning north and buffer delay
-wave_start = move_duration + turn_duration + turn_buffer
-wave_end = wave_start + wave_duration
-
-# -----------------------------------------------------
 # Arm joint indices
 # -----------------------------------------------------
-# Right arm joints
+# Right arm
 shoulder1_r = 22
 shoulder2_r = 23
 shoulder3_r = 24
 elbow_r = 25
 
-# Left arm joints
+# Left arm
 shoulder1_l = 26
 shoulder2_l = 27
 shoulder3_l = 28
 elbow_l = 29
 
 # -----------------------------------------------------
-# Default arm poses (from pointing code)
+# Arm pose definitions
 # -----------------------------------------------------
 left_default = dict(
     shoulder1=0.855,
     shoulder2=-0.611,
     shoulder3=-0.244,
+    elbow=-1.75
+)
+
+right_point = dict(
+    shoulder1=0.366,
+    shoulder2=0.349,
+    shoulder3=-0.0524,
     elbow=-1.75
 )
 
@@ -131,13 +125,18 @@ right_default = dict(
     elbow=-1.75
 )
 
-# Wave lifted pose
-wave_pose = dict(
-    shoulder1=-1.26,
-    shoulder2=-0.157,
-    shoulder3=0.96,
-    elbow=-0.7
-)
+# -----------------------------------------------------
+# Pointing animation parameters
+# -----------------------------------------------------
+pointing_duration = 0.3 / speed_scale  # fast move to pointing
+hold_duration = 2.0 / speed_scale
+return_duration = 0.3 / speed_scale
+
+# Timeline
+pointing_start = point_start
+pointing_hold = pointing_start + pointing_duration
+pointing_return = pointing_hold + hold_duration
+pointing_end = pointing_return + return_duration
 
 # -----------------------------------------------------
 # Interpolation functions
@@ -156,43 +155,40 @@ def interpolate_pose(t):
     pos, yaw = keyframes[-1][1], keyframes[-1][2]
     return pos, yaw_to_quat(yaw)
 
-def smooth_lerp(v0, v1, s):
-    """Smooth interpolation between two values."""
-    s = np.clip(s, 0.0, 1.0)
-    s = 3 * s**2 - 2 * s**3  # smoothstep
-    return (1 - s) * v0 + s * v1
-
-def wave_motion(t, qpos):
-    """Animate right arm wave during wave window with smooth transitions."""
-    # Left arm always at default
+def animate_arms(t, qpos):
+    """Handles both left default and right arm pointing animation."""
+    # --- Left arm always default ---
     qpos[shoulder1_l] = left_default["shoulder1"]
     qpos[shoulder2_l] = left_default["shoulder2"]
     qpos[shoulder3_l] = left_default["shoulder3"]
     qpos[elbow_l] = left_default["elbow"]
 
-    # ---- Pre-wave transition ----
-    if wave_start - pre_wave_duration <= t < wave_start:
-        s = (t - (wave_start - pre_wave_duration)) / pre_wave_duration
-        for k, v in wave_pose.items():
-            qpos[globals()[k + "_r"]] = smooth_lerp(right_default[k], v, s)
+    # --- Right arm animation ---
+    if pointing_start <= t <= pointing_hold:
+        # Move from default to pointing (fast)
+        s = (t - pointing_start) / (pointing_hold - pointing_start)
+        qpos[shoulder1_r] = (1 - s) * right_default["shoulder1"] + s * right_point["shoulder1"]
+        qpos[shoulder2_r] = (1 - s) * right_default["shoulder2"] + s * right_point["shoulder2"]
+        qpos[shoulder3_r] = (1 - s) * right_default["shoulder3"] + s * right_point["shoulder3"]
+        qpos[elbow_r] = (1 - s) * right_default["elbow"] + s * right_point["elbow"]
 
-    # ---- Waving ----
-    elif wave_start <= t <= wave_end:
-        phase = 2 * np.pi * wave_freq * (t - wave_start)
-        qpos[shoulder1_r] = wave_pose["shoulder1"]
-        qpos[shoulder2_r] = wave_pose["shoulder2"]
-        qpos[shoulder3_r] = wave_pose["shoulder3"]
-        elbow_min, elbow_max = -1.4, -0.2
-        qpos[elbow_r] = (elbow_max + elbow_min) / 2 + ((elbow_max - elbow_min) / 2) * np.sin(phase)
+    elif pointing_hold < t <= pointing_return:
+        # Hold the pointing pose
+        qpos[shoulder1_r] = right_point["shoulder1"]
+        qpos[shoulder2_r] = right_point["shoulder2"]
+        qpos[shoulder3_r] = right_point["shoulder3"]
+        qpos[elbow_r] = right_point["elbow"]
 
-    # ---- Post-wave return ----
-    elif wave_end < t <= wave_end + post_wave_duration:
-        s = (t - wave_end) / post_wave_duration
-        for k, v in wave_pose.items():
-            qpos[globals()[k + "_r"]] = smooth_lerp(v, right_default[k], s)
+    elif pointing_return < t <= pointing_end:
+        # Return to default pose (fast)
+        s = (t - pointing_return) / (pointing_end - pointing_return)
+        qpos[shoulder1_r] = (1 - s) * right_point["shoulder1"] + s * right_default["shoulder1"]
+        qpos[shoulder2_r] = (1 - s) * right_point["shoulder2"] + s * right_default["shoulder2"]
+        qpos[shoulder3_r] = (1 - s) * right_point["shoulder3"] + s * right_default["shoulder3"]
+        qpos[elbow_r] = (1 - s) * right_point["elbow"] + s * right_default["elbow"]
 
-    # ---- Default (not waving) ----
     else:
+        # Default pose
         qpos[shoulder1_r] = right_default["shoulder1"]
         qpos[shoulder2_r] = right_default["shoulder2"]
         qpos[shoulder3_r] = right_default["shoulder3"]
@@ -207,19 +203,19 @@ while viewer.is_alive:
     t = data.time
     pos, quat = interpolate_pose(t)
 
-    # Reset to neutral pose
+    # Reset base
     data.qpos[:] = 0.0
     data.qvel[:] = 0.0
 
-    # Base translation and orientation
+    # Base translation + orientation
     data.qpos[0:2] = pos
     data.qpos[2] = 1.5
     data.qpos[3:7] = quat
 
-    # Apply waving if in wave window
-    data.qpos = wave_motion(t, data.qpos.copy())
+    # Arm animation
+    data.qpos = animate_arms(t, data.qpos.copy())
 
-    # Step simulation
+    # Step + render
     mujoco.mj_step(model, data)
     viewer.render()
 
