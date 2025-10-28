@@ -38,10 +38,10 @@ def quat_slerp(q1, q2, s):
 # -----------------------------------------------------
 # Timing parameters
 # -----------------------------------------------------
-move_duration = 3.0
-turn_duration = 0.75
+move_duration = 2.0
+turn_duration = 0.5
 pause_duration = 3.0
-speed_scale = 1.5
+speed_scale = 4.0
 
 move_duration /= speed_scale
 turn_duration /= speed_scale
@@ -89,13 +89,14 @@ keyframes.append((t, np.array([6.0, 6.0]), np.pi / 2))
 # -----------------------------------------------------
 wave_start = move_duration + turn_duration       # after turning north
 wave_end = wave_start + 2.0 / speed_scale        # 2s of waving
-wave_freq = 2.0                                 # waves per second
+wave_freq = 4.0                                 # waves per second
 wave_amp = 0.5                                  # radians amplitude
 
 # Right arm joints (confirmed indices)
 shoulder1_idx = 22
 shoulder2_idx = 23
-elbow_idx = 24
+shoulder3_idx = 24
+elbow_idx = 25
 
 # -----------------------------------------------------
 # Interpolation functions
@@ -118,14 +119,20 @@ def wave_motion(t, qpos):
     """Animate right arm wave during wave window."""
     if wave_start <= t <= wave_end:
         phase = 2 * np.pi * wave_freq * (t - wave_start)
-        qpos[shoulder1_idx] = -1.2                     # lift arm sideways
-        qpos[shoulder2_idx] = -0.2                    # raise forward
-        qpos[elbow_idx] = 0.5 + wave_amp * np.sin(phase)
+
+        qpos[shoulder1_idx] = -1.26   # lift arm sideways
+        qpos[shoulder2_idx] = -0.157  # slight forward raise
+        qpos[shoulder3_idx] = 0.96    # neutral twist 
+        elbow_min, elbow_max = -1.2, -0.2
+        qpos[elbow_idx] = (elbow_max + elbow_min) / 2 + ((elbow_max - elbow_min) / 2) * np.sin(phase)
+
     else:
-        # return to neutral pose
+        # Return to neutral pose
         qpos[shoulder1_idx] = 0.0
         qpos[shoulder2_idx] = 0.0
-        qpos[elbow_idx] = -0.5
+        qpos[shoulder3_idx] = 0.0
+        qpos[elbow_idx] = 0.0
+
     return qpos
 
 # -----------------------------------------------------
