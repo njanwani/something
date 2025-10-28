@@ -93,7 +93,7 @@
         </default>
       </default>
       <default class="shoulder">
-        <joint range="-85 60"/>
+        <joint range="-100 100"/>
       </default>
       <default class="elbow">
         <joint range="-100 50" stiffness="0"/>
@@ -159,6 +159,7 @@
       <body name="upper_arm_right" pos="0 -.17 .06">
         <joint name="shoulder1_right" axis="2 1 1"  class="shoulder"/>
         <joint name="shoulder2_right" axis="0 -1 1" class="shoulder"/>
+        <joint name="shoulder3_right" axis="2 -2 -2" class="shoulder"/>
         <geom name="upper_arm_right" fromto="0 0 0 .16 -.16 -.16" class="arm_upper"/>
         <body name="lower_arm_right" pos=".18 -.18 -.18">
           <joint name="elbow_right" axis="0 -1 1" class="elbow"/>
@@ -171,6 +172,7 @@
       <body name="upper_arm_left" pos="0 .17 .06">
         <joint name="shoulder1_left" axis="-2 1 -1" class="shoulder"/>
         <joint name="shoulder2_left" axis="0 -1 -1"  class="shoulder"/>
+        <joint name="shoulder3_left" axis="-2 -2 2" class="shoulder"/>
         <geom name="upper_arm_left" fromto="0 0 0 .16 .16 -.16" class="arm_upper"/>
         <body name="lower_arm_left" pos=".18 .18 -.18">
           <joint name="elbow_left" axis="0 -1 -1" class="elbow"/>
@@ -223,16 +225,7 @@
     <motor name="elbow_left"      gear="40"  joint="elbow_left"/>
   </actuator>
 
-  <keyframe>
-    <!--
-    The values below are split into rows for readibility:
-      torso position
-      torso orientation
-      spinal
-      right leg
-      left leg
-      arms
-    -->
+  <!-- <keyframe>
     <key name="squat"
          qpos="0 0 0.596
                0.988015 0 0.154359 0
@@ -263,5 +256,5 @@
                0.0182 0.0142 0.3 0.042 -0.44 -0.02
                0.186 -0.73 -1.73
                0.186 -0.73 -1.73"/>
-  </keyframe>
+  </keyframe> -->
 </mujoco>
