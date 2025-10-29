@@ -1,4 +1,3 @@
-import mujoco
 import numpy as np
 
 # # -----------------------------------------------------
@@ -11,11 +10,13 @@ import numpy as np
 hz = 50
 dt = 1.0 / hz
 
+
 # -----------------------------------------------------
 # Quaternion utilities
 # -----------------------------------------------------
 def yaw_to_quat(yaw):
     return np.array([np.cos(yaw / 2), 0, 0, np.sin(yaw / 2)])
+
 
 def quat_slerp(q1, q2, s):
     dot = np.dot(q1, q2)
@@ -33,6 +34,7 @@ def quat_slerp(q1, q2, s):
     s1 = sin_theta / sin_theta_0
     q = s0 * q1 + s1 * q2
     return q / np.linalg.norm(q)
+
 
 # -----------------------------------------------------
 # Timing parameters
@@ -103,26 +105,11 @@ elbow_l = 29
 # -----------------------------------------------------
 # Arm pose definitions
 # -----------------------------------------------------
-left_default = dict(
-    shoulder1=0.855,
-    shoulder2=-0.611,
-    shoulder3=-0.244,
-    elbow=-1.75
-)
+left_default = dict(shoulder1=0.855, shoulder2=-0.611, shoulder3=-0.244, elbow=-1.75)
 
-right_point = dict(
-    shoulder1=0.366,
-    shoulder2=0.349,
-    shoulder3=-0.0524,
-    elbow=-1.75
-)
+right_point = dict(shoulder1=0.366, shoulder2=0.349, shoulder3=-0.0524, elbow=-1.75)
 
-right_default = dict(
-    shoulder1=0.75,
-    shoulder2=-0.558,
-    shoulder3=-0.489,
-    elbow=-1.75
-)
+right_default = dict(shoulder1=0.75, shoulder2=-0.558, shoulder3=-0.489, elbow=-1.75)
 
 # -----------------------------------------------------
 # Pointing animation parameters
@@ -136,6 +123,7 @@ pointing_start = point_start
 pointing_hold = pointing_start + pointing_duration
 pointing_return = pointing_hold + hold_duration
 pointing_end = pointing_return + return_duration
+
 
 # -----------------------------------------------------
 # Interpolation functions
@@ -154,6 +142,7 @@ def interpolate_pose(t):
     pos, yaw = keyframes[-1][1], keyframes[-1][2]
     return pos, yaw_to_quat(yaw)
 
+
 def point_motion(t, qpos):
     """Handles both left default and right arm pointing animation."""
     # --- Left arm always default ---
@@ -166,9 +155,15 @@ def point_motion(t, qpos):
     if pointing_start <= t <= pointing_hold:
         # Move from default to pointing (fast)
         s = (t - pointing_start) / (pointing_hold - pointing_start)
-        qpos[shoulder1_r] = (1 - s) * right_default["shoulder1"] + s * right_point["shoulder1"]
-        qpos[shoulder2_r] = (1 - s) * right_default["shoulder2"] + s * right_point["shoulder2"]
-        qpos[shoulder3_r] = (1 - s) * right_default["shoulder3"] + s * right_point["shoulder3"]
+        qpos[shoulder1_r] = (1 - s) * right_default["shoulder1"] + s * right_point[
+            "shoulder1"
+        ]
+        qpos[shoulder2_r] = (1 - s) * right_default["shoulder2"] + s * right_point[
+            "shoulder2"
+        ]
+        qpos[shoulder3_r] = (1 - s) * right_default["shoulder3"] + s * right_point[
+            "shoulder3"
+        ]
         qpos[elbow_r] = (1 - s) * right_default["elbow"] + s * right_point["elbow"]
 
     elif pointing_hold < t <= pointing_return:
@@ -181,9 +176,15 @@ def point_motion(t, qpos):
     elif pointing_return < t <= pointing_end:
         # Return to default pose (fast)
         s = (t - pointing_return) / (pointing_end - pointing_return)
-        qpos[shoulder1_r] = (1 - s) * right_point["shoulder1"] + s * right_default["shoulder1"]
-        qpos[shoulder2_r] = (1 - s) * right_point["shoulder2"] + s * right_default["shoulder2"]
-        qpos[shoulder3_r] = (1 - s) * right_point["shoulder3"] + s * right_default["shoulder3"]
+        qpos[shoulder1_r] = (1 - s) * right_point["shoulder1"] + s * right_default[
+            "shoulder1"
+        ]
+        qpos[shoulder2_r] = (1 - s) * right_point["shoulder2"] + s * right_default[
+            "shoulder2"
+        ]
+        qpos[shoulder3_r] = (1 - s) * right_point["shoulder3"] + s * right_default[
+            "shoulder3"
+        ]
         qpos[elbow_r] = (1 - s) * right_point["elbow"] + s * right_default["elbow"]
 
     else:
@@ -194,6 +195,7 @@ def point_motion(t, qpos):
         qpos[elbow_r] = right_default["elbow"]
 
     return qpos
+
 
 # # -----------------------------------------------------
 # # Simulation loop
