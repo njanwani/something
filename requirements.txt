@@ -1,20 +1,36 @@
 # LLM Motion Controller Requirements
 # Install with: pip install -r requirements.txt
+# Synced with environment.yml
 
 # Core dependencies
-numpy>=2.3.0
-mujoco>=3.3.6
-# mujoco-viewer>=0.1.2
+numpy==2.3.3
+mujoco==3.3.6
+mujoco-viewer==0.1.2
 
 # LLM integration
-openai>=1.59.5
-python-dotenv>=1.0.0
+openai==1.59.5
+python-dotenv==1.0.0
 
 # Visualization and utilities
-matplotlib>=3.10.0
-pillow>=11.3.0
+matplotlib==3.10.6
+pillow==11.3.0
+pyopengl==3.1.10
+glfw==2.10.0
 
-# Optional but recommended
-# For better terminal output
-# colorama>=0.4.6
+# Matplotlib dependencies
+contourpy==1.3.3
+cycler==0.12.1
+fonttools==4.60.1
+kiwisolver==1.4.9
+pyparsing==3.2.5
 
+# Utility libraries
+absl-py==2.3.1
+etils==1.13.0
+fsspec==2025.9.0
+packaging==25.0
+python-dateutil==2.9.0.post0
+six==1.17.0
+typing-extensions==4.15.0
+importlib-resources==6.5.2
+zipp==3.23.0
