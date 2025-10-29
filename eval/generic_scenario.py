@@ -1,49 +1,45 @@
-from eval.scenario1 import wave_motion, interpolate_pose
+# from eval.scenario1 import wave_motion, interpolate_pose
 from eval.scenario2 import point_motion
 import mujoco
 import mujoco_viewer
 import numpy as np
 from pathlib import Path
+from eval.motion import Wave
+from eval.find_stuff import create_name2idx
 
+G1_XYZ_ROOT = 'floating_base_joint_xyz'
 
-
-# -----------------------------------------------------
-# Load model
-# -----------------------------------------------------
-# model = mujoco.MjModel.from_xml_string("xmls/scene.xml")
 path = Path('xmls/scene.xml')
 model = mujoco.MjModel.from_xml_string(path.read_text())
 data = mujoco.MjData(model)
-viewer = mujoco_viewer.MujocoViewer(model, data)
+viewer = mujoco_viewer.MujocoViewer(model, data, hide_menus=True)
+viewer.cam = mujoco.MjvCamera()
+viewer.cam.distance = 5
+viewer.cam.azimuth = 210
+viewer.cam.elevation = -45
+
+name2idx = create_name2idx(model)
 
 hz = 50
 dt = 1.0 / hz
-# -----------------------------------------------------
-name2motion = {
-    "wave": wave_motion,
-    "point": point_motion
-    }
-MOTION = "point"  # Choose motion type: "wave" or "point"
-motion_func = name2motion[MOTION]
-# -----------------------------------------------------
-# Simulation loop
-# -----------------------------------------------------
+motion = Wave()
+cam_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_CAMERA, "side_view")
+
 while viewer.is_alive:
+    data.qpos[:] = 0
+    data.qvel[:] = 0
+    data.qacc[:] = 0
+    
+    # Human movement
     t = data.time
-    pos, quat = interpolate_pose(t)
-
-    # Reset base
-    data.qpos[:] = 0.0
-    data.qvel[:] = 0.0
-
-    # Base translation + orientation
-    data.qpos[0:2] = pos
-    data.qpos[2] = 1.5
+    pos, quat = motion.interpolate_pose(t)
+    data.qpos[0:3] = pos
     data.qpos[3:7] = quat
-
-    # Arm animation
-    data.qpos = motion_func(t, data.qpos.copy())
-
+    data.qpos = motion.wave_motion(t, data.qpos.copy())
+    
+    # Robot movement
+    data.qpos[name2idx[G1_XYZ_ROOT][2]] = 0.793
+    
     # Step + render
     mujoco.mj_step(model, data)
     viewer.render()
