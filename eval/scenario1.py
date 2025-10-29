@@ -1,4 +1,3 @@
-import mujoco
 import numpy as np
 
 # # -----------------------------------------------------
@@ -11,11 +10,13 @@ import numpy as np
 hz = 50
 dt = 1.0 / hz
 
+
 # -----------------------------------------------------
 # Quaternion utilities
 # -----------------------------------------------------
 def yaw_to_quat(yaw):
     return np.array([np.cos(yaw / 2), 0, 0, np.sin(yaw / 2)])
+
 
 def quat_slerp(q1, q2, s):
     dot = np.dot(q1, q2)
@@ -33,6 +34,7 @@ def quat_slerp(q1, q2, s):
     s1 = sin_theta / sin_theta_0
     q = s0 * q1 + s1 * q2
     return q / np.linalg.norm(q)
+
 
 # -----------------------------------------------------
 # Timing parameters
@@ -86,13 +88,13 @@ keyframes.append((t, np.array([6.0, 6.0]), np.pi / 2))
 # -----------------------------------------------------
 # Waving parameters (fixed to start *after* turn completes)
 # -----------------------------------------------------
-turn_buffer = 0.2 / speed_scale           # short delay after turn before waving
-pre_wave_duration = 0.3 / speed_scale     # smooth lift before waving
-post_wave_duration = 0.3 / speed_scale    # smooth return after waving
-wave_duration = 2.0 / speed_scale         # duration of actual waving
+turn_buffer = 0.2 / speed_scale  # short delay after turn before waving
+pre_wave_duration = 0.3 / speed_scale  # smooth lift before waving
+post_wave_duration = 0.3 / speed_scale  # smooth return after waving
+wave_duration = 2.0 / speed_scale  # duration of actual waving
 
-wave_freq = 4.0                           # waves per second
-wave_amp = 0.5                            # radians amplitude
+wave_freq = 4.0  # waves per second
+wave_amp = 0.5  # radians amplitude
 
 # Start waving *after* turning north and buffer delay
 wave_start = move_duration + turn_duration + turn_buffer
@@ -116,27 +118,13 @@ elbow_l = 29
 # -----------------------------------------------------
 # Default arm poses (from pointing code)
 # -----------------------------------------------------
-left_default = dict(
-    shoulder1=0.855,
-    shoulder2=-0.611,
-    shoulder3=-0.244,
-    elbow=-1.75
-)
+left_default = dict(shoulder1=0.855, shoulder2=-0.611, shoulder3=-0.244, elbow=-1.75)
 
-right_default = dict(
-    shoulder1=0.75,
-    shoulder2=-0.558,
-    shoulder3=-0.489,
-    elbow=-1.75
-)
+right_default = dict(shoulder1=0.75, shoulder2=-0.558, shoulder3=-0.489, elbow=-1.75)
 
 # Wave lifted pose
-wave_pose = dict(
-    shoulder1=-1.26,
-    shoulder2=-0.157,
-    shoulder3=0.96,
-    elbow=-0.7
-)
+wave_pose = dict(shoulder1=-1.26, shoulder2=-0.157, shoulder3=0.96, elbow=-0.7)
+
 
 # -----------------------------------------------------
 # Interpolation functions
@@ -155,11 +143,13 @@ def interpolate_pose(t):
     pos, yaw = keyframes[-1][1], keyframes[-1][2]
     return pos, yaw_to_quat(yaw)
 
+
 def smooth_lerp(v0, v1, s):
     """Smooth interpolation between two values."""
     s = np.clip(s, 0.0, 1.0)
     s = 3 * s**2 - 2 * s**3  # smoothstep
     return (1 - s) * v0 + s * v1
+
 
 def wave_motion(t, qpos):
     """Animate right arm wave during wave window with smooth transitions."""
@@ -182,7 +172,9 @@ def wave_motion(t, qpos):
         qpos[shoulder2_r] = wave_pose["shoulder2"]
         qpos[shoulder3_r] = wave_pose["shoulder3"]
         elbow_min, elbow_max = -1.4, -0.2
-        qpos[elbow_r] = (elbow_max + elbow_min) / 2 + ((elbow_max - elbow_min) / 2) * np.sin(phase)
+        qpos[elbow_r] = (elbow_max + elbow_min) / 2 + (
+            (elbow_max - elbow_min) / 2
+        ) * np.sin(phase)
 
     # ---- Post-wave return ----
     elif wave_end < t <= wave_end + post_wave_duration:
@@ -198,6 +190,7 @@ def wave_motion(t, qpos):
         qpos[elbow_r] = right_default["elbow"]
 
     return qpos
+
 
 # # -----------------------------------------------------
 # # Simulation loop

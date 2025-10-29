@@ -2,7 +2,6 @@
 from eval.scenario2 import point_motion
 import mujoco
 import mujoco_viewer
-import numpy as np
 from pathlib import Path
 from eval.motion import Wave
 from eval.find_stuff import create_name2idx

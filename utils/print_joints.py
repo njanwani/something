@@ -2,7 +2,7 @@ import mujoco
 from pathlib import Path
 
 # Load your model
-xml = Path('xmls/scene.xml')
+xml = Path("xmls/scene.xml")
 
 model = mujoco.MjModel.from_xml_string(xml.read_text())
 
