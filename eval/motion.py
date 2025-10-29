@@ -1,10 +1,39 @@
 import numpy as np
 
 
-class Scenario:
+class HumanoidScenario:
+    # -----------------------------------------------------
+    # Default arm poses (from pointing code)
+    # -----------------------------------------------------
+    left_default = dict(
+        shoulder1   = 0.855,
+        shoulder2   = -0.611,
+        shoulder3   = -0.244,
+        elbow       = -1.75
+    )
+
+    right_default = dict(
+        shoulder1   = 0.75,
+        shoulder2   = -0.558,
+        shoulder3   = -0.489,
+        elbow       = -1.75
+    )
+    
     def __init__(self, keyframes, z_height):
         self.keyframes = keyframes
         self.z_height = z_height
+        
+        # Right arm joints
+        self.shoulder1_r = 22
+        self.shoulder2_r = 23
+        self.shoulder3_r = 24
+        self.elbow_r     = 25
+
+        # Left arm joints
+        self.shoulder1_l = 26
+        self.shoulder2_l = 27
+        self.shoulder3_l = 28
+        self.elbow_l     = 29
     
     @classmethod
     def yaw_to_quat(cls, yaw):
@@ -42,34 +71,17 @@ class Scenario:
             if t0 <= t <= t1:
                 s = (t - t0) / (t1 - t0)
                 pos = (1 - s) * pos0 + s * pos1
-                q0 = Scenario.yaw_to_quat(yaw0)
-                q1 = Scenario.yaw_to_quat(yaw1)
-                quat = Scenario.quat_slerp(q0, q1, s)
+                q0 = HumanoidScenario.yaw_to_quat(yaw0)
+                q1 = HumanoidScenario.yaw_to_quat(yaw1)
+                quat = HumanoidScenario.quat_slerp(q0, q1, s)
                 pos = np.append(pos, self.z_height)
                 return pos, quat
         pos, yaw = self.keyframes[-1][1], self.keyframes[-1][2]
         pos.append(self.z_height)
-        return pos, Scenario.yaw_to_quat(yaw)
+        return pos, HumanoidScenario.yaw_to_quat(yaw)
     
     
-class Wave(Scenario):
-    # -----------------------------------------------------
-    # Default arm poses (from pointing code)
-    # -----------------------------------------------------
-    left_default = dict(
-        shoulder1=0.855,
-        shoulder2=-0.611,
-        shoulder3=-0.244,
-        elbow=-1.75
-    )
-
-    right_default = dict(
-        shoulder1=0.75,
-        shoulder2=-0.558,
-        shoulder3=-0.489,
-        elbow=-1.75
-    )
-
+class Wave(HumanoidScenario):
     # Wave lifted pose
     wave_pose = dict(
         shoulder1=-1.26,
@@ -121,19 +133,6 @@ class Wave(Scenario):
         keyframes.append((t, np.array([-6.0, 1.5]), -np.pi))
         super().__init__(keyframes, z_height)
         
-        
-        # Right arm joints
-        self.shoulder1_r = 22
-        self.shoulder2_r = 23
-        self.shoulder3_r = 24
-        self.elbow_r     = 25
-
-        # Left arm joints
-        self.shoulder1_l = 26
-        self.shoulder2_l = 27
-        self.shoulder3_l = 28
-        self.elbow_l     = 29
-        
         turn_buffer = turn_buffer / speed_scale           # short delay after turn before waving
         self.pre_wave_duration = pre_wave_duration / speed_scale     # smooth lift before waving
         self.post_wave_duration = post_wave_duration / speed_scale    # smooth return after waving
@@ -146,7 +145,7 @@ class Wave(Scenario):
         self.wave_start = move_duration + turn_duration + turn_buffer
         self.wave_end = self.wave_start + wave_duration                
     
-    def wave_motion(self, t, qpos):
+    def motion(self, t, qpos):
         """Animate right arm wave during wave window with smooth transitions."""
         # Left arm always at default
         qpos[self.shoulder1_l] = Wave.left_default["shoulder1"]
@@ -180,5 +179,126 @@ class Wave(Scenario):
             qpos[self.shoulder2_r] = Wave.right_default["shoulder2"]
             qpos[self.shoulder3_r] = Wave.right_default["shoulder3"]
             qpos[self.elbow_r]     = Wave.right_default["elbow"]
+
+        return qpos
+    
+    
+class Point(HumanoidScenario):
+    
+    right_point = dict(shoulder1=0.366, shoulder2=0.349, shoulder3=-0.0524, elbow=-1.75)
+
+    
+    def __init__(
+        self,
+        z_height=1.28,
+        move_duration=2.0,
+        turn_duration=0.5,
+        pause_duration=3.0,
+        pointing_duration=0.3,
+        hold_duration=2.0,
+        return_duration=0.3,
+        speed_scale=1.0,
+    ):
+        
+        keyframes = []
+        t = 0.0
+        move_duration /= speed_scale
+        turn_duration /= speed_scale
+        pause_duration /= speed_scale
+
+        # Start facing east
+        keyframes.append((t, np.array([1.5, -3.0]), np.pi / 2))
+
+        # Move east (3s)
+        t += move_duration
+        keyframes.append((t, np.array([1.5, 0.0]), np.pi / 2))
+
+        # Turn north (fast)
+        t += turn_duration
+        keyframes.append((t, np.array([1.5, 0.0]), -np.pi))
+
+        # Pause while pointing and holding (≈3s total)
+        point_start = t
+        point_end = t + 3.0 / speed_scale  # total time for point + hold + return
+        keyframes.append((point_end, np.array([1.5, 0.0]), -np.pi))
+
+        # Wait 1s before turning east again
+        t = point_end + 1.0 / speed_scale
+
+        # Turn east again
+        t += turn_duration
+        keyframes.append((t, np.array([1.5, 0.0]), np.pi / 2))
+
+        # Continue moving east and north as before
+        t += move_duration
+        keyframes.append((t, np.array([1.5, 1.5]), np.pi/2))
+
+        t += turn_duration
+        keyframes.append((t, np.array([1.5, 1.5]), -np.pi))
+
+        t += 2 * move_duration
+        keyframes.append((t, np.array([-6.0, 1.5]), -np.pi))
+        super().__init__(keyframes, z_height)
+        
+        pointing_duration = pointing_duration / speed_scale  # fast move to pointing
+        hold_duration = hold_duration / speed_scale
+        return_duration = return_duration / speed_scale
+
+        # Timeline
+        self.pointing_start = point_start
+        self.pointing_hold = self.pointing_start + pointing_duration
+        self.pointing_return = self.pointing_hold + hold_duration
+        self.pointing_end = self.pointing_return + return_duration
+    
+    def motion(self, t, qpos):
+        """Handles both left default and right arm pointing animation."""
+        # --- Left arm always default ---
+        qpos[self.shoulder1_l] = self.left_default["shoulder1"]
+        qpos[self.shoulder2_l] = self.left_default["shoulder2"]
+        qpos[self.shoulder3_l] = self.left_default["shoulder3"]
+        qpos[self.elbow_l]     = self.left_default["elbow"]
+
+        # --- Right arm animation ---
+        if self.pointing_start <= t <= self.pointing_hold:
+            # Move from default to pointing (fast)
+            s = (t - self.pointing_start) / (self.pointing_hold - self.pointing_start)
+            qpos[self.shoulder1_r] = (1 - s) * self.right_default["shoulder1"] + s * self.right_point[
+                "shoulder1"
+            ]
+            qpos[self.shoulder2_r] = (1 - s) * self.right_default["shoulder2"] + s * self.right_point[
+                "shoulder2"
+            ]
+            qpos[self.shoulder3_r] = (1 - s) * self.right_default["shoulder3"] + s * self.right_point[
+                "shoulder3"
+            ]
+
+            qpos[self.elbow_r] = (1 - s) * self.right_default["elbow"] + s * self.right_point["elbow"]
+        elif self.pointing_hold < t <= self.pointing_return:
+            # Hold the pointing pose
+            qpos[self.shoulder1_r] = self.right_point["shoulder1"]
+            qpos[self.shoulder2_r] = self.right_point["shoulder2"]
+            qpos[self.shoulder3_r] = self.right_point["shoulder3"]
+            qpos[self.elbow_r]     = self.right_point["elbow"]
+
+        elif self.pointing_return < t <= self.pointing_end:
+            # Return to default pose (fast)
+            s = (t - self.pointing_return) / (self.pointing_end - self.pointing_return)
+            qpos[self.shoulder1_r] = (1 - s) * self.right_point["shoulder1"] + s * self.right_default[
+                "shoulder1"
+            ]
+            qpos[self.shoulder2_r] = (1 - s) * self.right_point["shoulder2"] + s * self.right_default[
+                "shoulder2"
+            ]
+            qpos[self.shoulder3_r] = (1 - s) * self.right_point["shoulder3"] + s * self.right_default[
+                "shoulder3"
+            ]
+            qpos[self.elbow_r] = (1 - s) * self.right_point["elbow"] + s * self.right_default["elbow"]
+
+        else:
+            # Default pose
+            qpos[self.shoulder1_r] = self.right_default["shoulder1"]
+            qpos[self.shoulder2_r] = self.right_default["shoulder2"]
+            qpos[self.shoulder3_r] = self.right_default["shoulder3"]
+            qpos[self.elbow_r]     = self.right_default["elbow"]
 
         return qpos

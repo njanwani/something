@@ -3,7 +3,7 @@ from eval.scenario2 import point_motion
 import mujoco
 import mujoco_viewer
 from pathlib import Path
-from eval.motion import Wave
+from eval.motion import Wave, Point
 from eval.find_stuff import create_name2idx
 
 G1_XYZ_ROOT = 'floating_base_joint_xyz'
@@ -21,7 +21,8 @@ name2idx = create_name2idx(model)
 
 hz = 50
 dt = 1.0 / hz
-motion = Wave()
+# motion = Wave(speed_scale=3.0)
+motion = Point(speed_scale=3.0)
 cam_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_CAMERA, "side_view")
 
 while viewer.is_alive:
@@ -34,7 +35,7 @@ while viewer.is_alive:
     pos, quat = motion.interpolate_pose(t)
     data.qpos[0:3] = pos
     data.qpos[3:7] = quat
-    data.qpos = motion.wave_motion(t, data.qpos.copy())
+    data.qpos = motion.motion(t, data.qpos.copy())
     
     # Robot movement
     data.qpos[name2idx[G1_XYZ_ROOT][2]] = 0.793
