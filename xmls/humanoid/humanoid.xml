@@ -32,79 +32,10 @@
     <material name="grid" texture="grid" texrepeat="1 1" texuniform="true" reflectance=".2"/>
   </asset>
 
-  <default>
-    <motor ctrlrange="-1 1" ctrllimited="true"/>
-    <default class="body">
-
-      <!-- geoms -->
-      <geom type="capsule" condim="1" friction=".7" solimp=".9 .99 .003" solref=".015 1" material="body" group="1"/>
-      <default class="thigh">
-        <geom size=".06"/>
-      </default>
-      <default class="shin">
-        <geom fromto="0 0 0 0 0 -.3"  size=".049"/>
-      </default>
-      <default class="foot">
-        <geom size=".027"/>
-        <default class="foot1">
-          <geom fromto="-.07 -.01 0 .14 -.03 0"/>
-        </default>
-        <default class="foot2">
-          <geom fromto="-.07 .01 0 .14  .03 0"/>
-        </default>
-      </default>
-      <default class="arm_upper">
-        <geom size=".04"/>
-      </default>
-      <default class="arm_lower">
-        <geom size=".031"/>
-      </default>
-      <default class="hand">
-        <geom type="sphere" size=".04"/>
-      </default>
-
-      <!-- joints -->
-      <joint type="hinge" damping=".2" stiffness="1" armature=".01" limited="true" solimplimit="0 .99 .01"/>
-      <default class="joint_big">
-        <joint damping="5" stiffness="10"/>
-        <default class="hip_x">
-          <joint range="-30 10"/>
-        </default>
-        <default class="hip_z">
-          <joint range="-60 35"/>
-        </default>
-        <default class="hip_y">
-          <joint axis="0 1 0" range="-150 20"/>
-        </default>
-        <default class="joint_big_stiff">
-          <joint stiffness="20"/>
-        </default>
-      </default>
-      <default class="knee">
-        <joint pos="0 0 .02" axis="0 -1 0" range="-160 2"/>
-      </default>
-      <default class="ankle">
-        <joint range="-50 50"/>
-        <default class="ankle_y">
-          <joint pos="0 0 .08" axis="0 1 0" stiffness="6"/>
-        </default>
-        <default class="ankle_x">
-          <joint pos="0 0 .04" stiffness="3"/>
-        </default>
-      </default>
-      <default class="shoulder">
-        <joint range="-100 100"/>
-      </default>
-      <default class="elbow">
-        <joint range="-100 50" stiffness="0"/>
-      </default>
-    </default>
-  </default>
-
   <worldbody>
-    <geom name="floor" size="0 0 .05" type="plane" material="grid" condim="3"/>
-    <light name="spotlight" mode="targetbodycom" target="torso" diffuse=".8 .8 .8" specular="0.3 0.3 0.3" pos="0 -6 4" cutoff="30"/>
-    <light name="top" pos="0 0 2" mode="trackcom"/>
+    <!-- <geom name="floor" size="0 0 .05" type="plane" material="grid" condim="3"/> -->
+    <!-- <light name="spotlight" mode="targetbodycom" target="torso" diffuse=".8 .8 .8" specular="0.3 0.3 0.3" pos="0 -6 4" cutoff="30"/> -->
+    <!-- <light name="top" pos="0 0 2" mode="trackcom"/> -->
     <body name="torso" pos="0 0 1.282" childclass="body">
       <camera name="back" pos="-3 0 1" xyaxes="0 -1 0 1 0 2" mode="trackcom"/>
       <camera name="side" pos="0 -3 1" xyaxes="1 0 0 0 1 2" mode="trackcom"/>
@@ -119,7 +50,7 @@
         <geom name="waist_lower" fromto="0 -.06 0 0 .06 0" size=".06"/>
         <joint name="abdomen_z" pos="0 0 .065" axis="0 0 1" range="-45 45" class="joint_big_stiff"/>
         <joint name="abdomen_y" pos="0 0 .065" axis="0 1 0" range="-75 30" class="joint_big"/>
-        <body name="pelvis" pos="0 0 -.165">
+        <body name="humanoid_pelvis" pos="0 0 -.165">
           <joint name="abdomen_x" pos="0 0 .1" axis="1 0 0" range="-35 35" class="joint_big"/>
           <geom name="butt" fromto="-.02 -.07 0 -.02 .07 0" size=".09"/>
           <body name="thigh_right" pos="0 -.1 -.04">

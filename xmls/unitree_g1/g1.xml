@@ -3,23 +3,6 @@
 
   <option integrator="implicitfast"/>
 
-  <default>
-    <default class="g1">
-      <site rgba="1 0 0 1" size="0.01" group="5"/>
-      <joint armature="0.01" frictionloss="0.3"/>
-      <position kp="500" dampratio="1" />
-      <default class="visual">
-        <geom group="2" type="mesh" contype="0" conaffinity="0" density="0" material="metal"/>
-      </default>
-      <default class="collision">
-        <geom group="3" type="mesh"/>
-        <default class="foot">
-          <geom type="sphere" size="0.005" priority="1" friction="0.6" condim="3"/>
-        </default>
-      </default>
-    </default>
-  </default>
-
   <asset>
     <material name="black" rgba="0.2 0.2 0.2 1"/>
     <material name="metal" rgba="0.7 0.7 0.7 1"/>
@@ -104,11 +87,11 @@
                     diaginertia="0.00167218 0.0016161 0.000217621"/>
                   <joint name="left_ankle_roll_joint" axis="1 0 0" range="-0.2618 0.2618" actuatorfrcrange="-50 50"/>
                   <geom class="visual" material="black" mesh="left_ankle_roll_link"/>
-                  <geom class="foot" pos="-0.05 0.025 -0.03"/>
-                  <geom class="foot" pos="-0.05 -0.025 -0.03"/>
-                  <geom class="foot" pos="0.12 0.03 -0.03"/>
-                  <geom class="foot" pos="0.12 -0.03 -0.03"/>
-                  <site name="left_foot"/>
+                  <geom class="g1_foot" pos="-0.05 0.025 -0.03"/>
+                  <geom class="g1_foot" pos="-0.05 -0.025 -0.03"/>
+                  <geom class="g1_foot" pos="0.12 0.03 -0.03"/>
+                  <geom class="g1_foot" pos="0.12 -0.03 -0.03"/>
+                  <site name="left_g1_foot"/>
                 </body>
               </body>
             </body>
@@ -150,11 +133,11 @@
                     diaginertia="0.00167218 0.0016161 0.000217621"/>
                   <joint name="right_ankle_roll_joint" axis="1 0 0" range="-0.2618 0.2618" actuatorfrcrange="-50 50"/>
                   <geom class="visual" material="black" mesh="right_ankle_roll_link"/>
-                  <geom class="foot" pos="-0.05 0.025 -0.03"/>
-                  <geom class="foot" pos="-0.05 -0.025 -0.03"/>
-                  <geom class="foot" pos="0.12 0.03 -0.03"/>
-                  <geom class="foot" pos="0.12 -0.03 -0.03"/>
-                  <site name="right_foot"/>
+                  <geom class="g1_foot" pos="-0.05 0.025 -0.03"/>
+                  <geom class="g1_foot" pos="-0.05 -0.025 -0.03"/>
+                  <geom class="g1_foot" pos="0.12 0.03 -0.03"/>
+                  <geom class="g1_foot" pos="0.12 -0.03 -0.03"/>
+                  <site name="right_g1_foot"/>
                 </body>
               </body>
             </body>

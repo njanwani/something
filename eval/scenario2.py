@@ -1,5 +1,4 @@
 import mujoco
-import mujoco_viewer
 import numpy as np
 
 # # -----------------------------------------------------
