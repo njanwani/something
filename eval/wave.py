@@ -7,9 +7,10 @@ from pathlib import Path
 ARM_POS = 0.7 * (2 * np.random.random(6) - 1)
 
 # Load the Unitree G1 model
-path = Path('xmls/scene.xml')
+path = Path("xmls/scene.xml")
 model = mujoco.MjModel.from_xml_string(path.read_text())
 data = mujoco.MjData(model)
+
 
 def update_pos(t, _model, _data):
     _data.qpos[:7] = FLOATING_FRAME.copy()
@@ -24,6 +25,7 @@ def update_pos(t, _model, _data):
     data.ctrl = data.qpos[7:]
     return _data
 
+
 HZ = 50
 FLOATING_XYZ = np.array([0.0, 0.0, 0.8])
 FLOATING_QUAT = np.array([1.0, 0.0, 0.0, 0.0])
@@ -36,11 +38,10 @@ sim_start = time.time()
 with mujoco.viewer.launch_passive(model, data) as viewer:
     while viewer.is_running():
         time_start = data.time
-        real_time  = time.time()
+        real_time = time.time()
         while data.time - time_start < 1.0 / HZ:
             data = update_pos(data.time, model, data)
             mujoco.mj_step(model, data)
-            
 
         viewer.sync()
         left_over_time = time.time() - real_time

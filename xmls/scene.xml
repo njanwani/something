@@ -1,17 +1,100 @@
 <mujoco model="g1_29dof_rev_1_0 scene">
+  <default>
+    <default class="g1">
+      <site rgba="1 0 0 1" size="0.01" group="5"/>
+      <joint armature="0.01" frictionloss="0.3"/>
+      <position kp="500" dampratio="1" />
+      <default class="visual">
+        <geom group="2" type="mesh" contype="0" conaffinity="0" density="0" material="metal"/>
+      </default>
+      <default class="collision">
+        <geom group="3" type="mesh"/>
+        <default class="g1_foot">
+          <geom type="sphere" size="0.005" priority="1" friction="0.6" condim="3"/>
+        </default>
+      </default>
+    </default>
+    <motor ctrlrange="-1 1" ctrllimited="true"/>
+    <default class="body">
+
+      <!-- geoms -->
+      <geom type="capsule" condim="1" friction=".7" solimp=".9 .99 .003" solref=".015 1" material="body" group="1"/>
+      <default class="thigh">
+        <geom size=".06"/>
+      </default>
+      <default class="shin">
+        <geom fromto="0 0 0 0 0 -.3"  size=".049"/>
+      </default>
+      <default class="foot">
+        <geom size=".027"/>
+        <default class="foot1">
+          <geom fromto="-.07 -.01 0 .14 -.03 0"/>
+        </default>
+        <default class="foot2">
+          <geom fromto="-.07 .01 0 .14  .03 0"/>
+        </default>
+      </default>
+      <default class="arm_upper">
+        <geom size=".04"/>
+      </default>
+      <default class="arm_lower">
+        <geom size=".031"/>
+      </default>
+      <default class="hand">
+        <geom type="sphere" size=".04"/>
+      </default>
+
+      <!-- joints -->
+      <joint type="hinge" damping=".2" stiffness="1" armature=".01" limited="true" solimplimit="0 .99 .01"/>
+      <default class="joint_big">
+        <joint damping="5" stiffness="10"/>
+        <default class="hip_x">
+          <joint range="-30 10"/>
+        </default>
+        <default class="hip_z">
+          <joint range="-60 35"/>
+        </default>
+        <default class="hip_y">
+          <joint axis="0 1 0" range="-150 20"/>
+        </default>
+        <default class="joint_big_stiff">
+          <joint stiffness="20"/>
+        </default>
+      </default>
+      <default class="knee">
+        <joint pos="0 0 .02" axis="0 -1 0" range="-160 2"/>
+      </default>
+      <default class="ankle">
+        <joint range="-50 50"/>
+        <default class="ankle_y">
+          <joint pos="0 0 .08" axis="0 1 0" stiffness="6"/>
+        </default>
+        <default class="ankle_x">
+          <joint pos="0 0 .04" stiffness="3"/>
+        </default>
+      </default>
+      <default class="shoulder">
+        <joint range="-100 100"/>
+      </default>
+      <default class="elbow">
+        <joint range="-100 50" stiffness="0"/>
+      </default>
+    </default>
+  </default>
+  <include file="xmls/humanoid/humanoid.xml"/>
   <include file="xmls/unitree_g1/g1.xml"/>
   <!-- <include file="xmls/humanoid/humanoid.xml"/> -->
   <include file="xmls/table/table.xml"/>
   <include file="xmls/wall/wall.xml"/>
-  <!-- <include file="xmls/generic_arm/arm6DOF.xml"/> -->
+  
   <!-- <include file="models/mug.xml"/> -->
 
-  <statistic center="1 -0.8 1.1" extent=".35"/>
+  <!-- <statistic center="1 -0.8 1.1" extent=".35"/> -->
 
   <visual>
-    <headlight diffuse="0.6 0.6 0.6" ambient="0.1 0.1 0.1" specular="0.9 0.9 0.9"/>
-    <rgba haze="0.15 0.25 0.35 1"/>
-    <global azimuth="140" elevation="-20"/>
+    <!-- <headlight diffuse="0.6 0.6 0.6" ambient="0.1 0.1 0.1" specular="0.9 0.9 0.9"/> -->
+    <!-- <rgba haze="0.15 0.25 0.35 1"/> -->
+    <!-- <global azimuth="140" elevation="-20"/> -->
   </visual>
 
   <asset>
