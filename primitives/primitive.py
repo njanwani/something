@@ -10,13 +10,13 @@ class Primitive:
         self.duration = duration
     
     def move(self, t):
-        idx  = np.round(t / self.duration) * self.length
-        idx  = np.clip(idx, 0, self.length)
-        prev = self.traj[np.floor(idx)]
-        next = self.traj(np.ceil(idx))
+        idx  = t / self.duration * (self.length - 1)
+        idx  = np.clip(idx, 0, self.length - 1)
+        prev = self.traj.iloc[np.floor(idx).astype(int)]
+        next = self.traj.iloc[np.ceil(idx).astype(int)]
         
         prog = idx - np.floor(idx)
-        cmd  = next * prog + prev * (1 - prev)
+        cmd  = next * prog + prev * (1 - prog)
         
         return cmd
     
@@ -26,17 +26,17 @@ class Primitive:
     
     @property
     def first_position(self):
-        return self.traj[0]
+        return self.traj.iloc[0]
     
     @property
     def last_position(self):
-        return self.traj[-1]
+        return self.traj.iloc[-1]
     
 class Rest(Primitive):
     
     def __init__(self, duration):
         super().__init__(
-            Path(r'primitives/data/rest.csv'),
+            pd.read_csv(Path(r'primitives/data/rest.csv')),
             duration
         )
     
@@ -62,11 +62,22 @@ class Transition(Primitive):
     def description(self):
         return 'Transitions between one primitive to the next'
     
-class Wave(Primitive):
-    raise NotImplementedError()
+# class Wave(Primitive):
+#     raise NotImplementedError()
 
-class Nod(Primitive):
-    raise NotImplementedError()
+# class Nod(Primitive):
+#     raise NotImplementedError()
 
-class Guide(Primitive):
-    raise NotImplementedError()
+# class Guide(Primitive):
+#     raise NotImplementedError()
+
+
+if __name__ == '__main__':
+    p = Rest(duration=1)
+    print(p.traj)
+    print()
+    print(p.move(0))
+    print()
+    print(p.move(0.5))
+    print()
+    print(p.move(1))

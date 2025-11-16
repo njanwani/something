@@ -1,5 +1,5 @@
 <mujoco model="g1_29dof_rev_1_0">
-  <compiler angle="radian"/>
+  <compiler angle="radian" meshdir='..'/>
 
   <option integrator="implicitfast"/>
 
@@ -165,6 +165,7 @@
               <inertial pos="0 0 0" quat="1 0 0 0" mass="0.086" diaginertia="0.121847 0.109825 0.0273735"/>
               <joint name="head_pitch_joint" pos="0 0 0.33" axis="0 1 0" range="-0.52 0.52" actuatorfrcrange="-50 50"/>
               <joint name="head_yaw_joint" pos="0 0 0.33" axis="0 0 1" range="-0.52 0.52" actuatorfrcrange="-50 50"/>
+              <joint name="head_roll_joint" pos="0 0 0.33" axis="1 0 0" range="-0.52 0.52" actuatorfrcrange="-50 50"/>
               <body>
                 <inertial pos="0 0 0" quat="1 0 0 0" mass="0.086" diaginertia="0.121847 0.109825 0.0273735"/>
                   <geom class="visual" material="black" mesh="head_link"/>

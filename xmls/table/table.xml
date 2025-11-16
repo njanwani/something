@@ -1,5 +1,5 @@
 <mujoco model="table">
-  <compiler angle="radian" autolimits="true"/>  
+  <compiler angle="radian" autolimits="true" texturedir='..'/>  
   <visual>
     <!-- <headlight ambient="0 0 0" diffuse="0 0 0" specular="1 1 1"/> -->
     <!-- <quality shadowsize="8192"/> -->
