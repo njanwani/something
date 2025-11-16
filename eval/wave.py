@@ -8,7 +8,7 @@ ARM_POS = 0.7 * (2 * np.random.random(6) - 1)
 
 # Load the Unitree G1 model
 path = Path("xmls/scene.xml")
-model = mujoco.MjModel.from_xml_string(path.read_text())
+model = mujoco.MjModel.from_xml_path(path.as_posix())
 data = mujoco.MjData(model)
 
 
