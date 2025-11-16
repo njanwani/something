@@ -24,7 +24,8 @@ name2idx = create_name2idx(model)
 
 hz = 50
 dt = 1.0 / hz
-motion = pm.Rest(duration=4)
+# motion = pm.Rest(duration=4)
+motion = pm.Wave(duration=4)
 # motion = Point(speed_scale=3.0)
 cam_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_CAMERA, "side_view")
 

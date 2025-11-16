@@ -6,7 +6,7 @@ import torch
 
 class PoseObserver2D:
     
-    def __init__(self, norm_length, model='accurate'):  
+    def __init__(self, norm_length, model='accurate', videofile=None):  
         self.left_arm_pxls = np.zeros(3)
         self.right_arm_pxls = np.zeros(3)      
         self.norm_length = norm_length
@@ -49,14 +49,19 @@ class PoseObserver2D:
         except Exception as e:
             print(f"Error: failed to load YOLO model '{model_path}': {e}")
             raise
-        self.cap = cv2.VideoCapture(0)
-        if not self.cap.isOpened():
-            print("Error: Could not open camera.")
-            exit()
+        if videofile is None:
+            self.cap = cv2.VideoCapture(0)
+            if not self.cap.isOpened():
+                print("Error: Could not open camera.")
+                exit()
+        else:
+            self.cap = cv2.VideoCapture(videofile)
+        
+        self.frame = np.zeros((1,1))
     
     def read_pose(self):
-        ret, frame = self.cap.read()
-        results = self.model(frame, verbose=False)
+        ret, self.frame = self.cap.read()
+        results = self.model(self.frame, verbose=False)
         # Get keypoints (if any person detected)
         keypoints = results[0].keypoints
         if keypoints is not None and len(keypoints.xy) > 0:
@@ -69,6 +74,8 @@ class PoseObserver2D:
 
             self.left_arm_pxls  = np.array(person_kpts[left_arm_idxs])
             self.right_arm_pxls = np.array(person_kpts[right_arm_idxs])
+        
+        return ret
             
     def arm_length(self, arm_arr):
         return np.sum(np.linalg.norm(np.diff(arm_arr, axis=0)))
@@ -77,6 +84,28 @@ class PoseObserver2D:
         flipped = ((arm_arr - arm_arr[0]) / self.arm_length(arm_arr)) * self.norm_length
         flipz   = np.array([[1, -1]])
         return flipped * flipz
+    
+    def show_keypoints(self):
+        for pxl in self.left_arm_pxls:
+            cv2.circle(
+                self.frame,
+                center=pxl.astype(int),
+                radius=5,
+                color=(0, 255, 0),   
+                thickness=5
+            )
+            
+        for pxl in self.right_arm_pxls:
+            cv2.circle(
+                self.frame,
+                center=pxl.astype(int),
+                radius=5,
+                color=(255, 0, 0),   
+                thickness=5
+            )
+            
+        cv2.imshow('frame', self.frame)
+        cv2.waitKey(1)
     
     @property
     def left_arm(self):

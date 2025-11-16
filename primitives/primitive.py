@@ -36,7 +36,19 @@ class Rest(Primitive):
     
     def __init__(self, duration):
         super().__init__(
-            pd.read_csv(Path(r'primitives/data/rest.csv'), index_col=0),
+            pd.read_csv(Path(r'primitives/data/Rest.csv'), index_col=0),
+            duration
+        )
+    
+    @classmethod
+    def description(cls):
+        return 'TBD'
+    
+class Wave(Primitive):
+    
+    def __init__(self, duration):
+        super().__init__(
+            pd.read_csv(Path(r'primitives/data/Wave.csv'), index_col=0),
             duration
         )
     

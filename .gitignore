@@ -209,6 +209,8 @@ __marimo__/
 yolov8l-pose.pt
 yolov8n-pose.pt
 
+*.mp4
+
 .DS_Store
 MUJOCO_LOG.TXT
 yolov8l-pose.pt
