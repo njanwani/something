@@ -36,7 +36,7 @@ class Rest(Primitive):
     
     def __init__(self, duration):
         super().__init__(
-            pd.read_csv(Path(r'primitives/data/rest.csv')),
+            pd.read_csv(Path(r'primitives/data/rest.csv'), index_col=0),
             duration
         )
     

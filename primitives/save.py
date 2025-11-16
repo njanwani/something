@@ -45,6 +45,12 @@ name2idx = create_name2idx(model)
 
 def rest():
     rest_pos = np.zeros(32)
+    rest_pos[-7 + name2idx['left_shoulder_pitch_joint']]  =  0.28
+    rest_pos[-7 + name2idx['left_shoulder_roll_joint']]   =  0.121
+    rest_pos[-7 + name2idx['left_elbow_joint']]           =  0.916
+    rest_pos[-7 + name2idx['right_shoulder_pitch_joint']] =  0.28
+    rest_pos[-7 + name2idx['right_shoulder_roll_joint']]  = -0.121
+    rest_pos[-7 + name2idx['right_elbow_joint']]          =  0.916
     traj     = np.array([rest_pos, rest_pos]).astype(float)
     df = pd.DataFrame(data=traj, columns=G1_JOINTS)
     return df
