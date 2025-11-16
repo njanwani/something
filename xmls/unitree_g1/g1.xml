@@ -221,7 +221,7 @@
                             actuatorfrcrange="-5 5"/>
                             <geom class="visual" mesh="left_wrist_yaw_link"/>
                             <geom class="collision" mesh="left_wrist_yaw_link"/>
-                            <body name="left_hand"pos="0.0415 0.003 0" quat="1 0 0 0" >
+                            <body name="left_hand" pos="0.0415 0.003 0" quat="1 0 0 0" >
                               <geom class="visual" mesh="left_rubber_hand"/>
                             </body>
                         </body>
@@ -281,7 +281,9 @@
                             actuatorfrcrange="-5 5"/>
                           <geom class="visual" mesh="right_wrist_yaw_link"/>
                           <geom class="collision" mesh="right_wrist_yaw_link"/>
-                          <geom pos="0.0415 -0.003 0" quat="1 0 0 0" class="visual" mesh="right_rubber_hand"/>
+                          <body name="right_hand" pos="0.0415 -0.003 0" quat="1 0 0 0" >
+                              <geom  class="visual" mesh="right_rubber_hand"/>
+                          </body>
                         </body>
                       </body>
                     </body>

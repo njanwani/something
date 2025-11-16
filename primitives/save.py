@@ -65,10 +65,16 @@ def rest():
 
 def wave():
     NJOINTS = name2idx['left_wrist_yaw_joint'] - name2idx['left_shoulder_pitch_joint'] + 1
-    imitate_q = np.zeros(NJOINTS)
-    g1_chain = Chain.from_mujoco(
+    left_q  = np.zeros(NJOINTS)
+    right_q = np.zeros(NJOINTS)
+    left_arm_chain = Chain.from_mujoco(
         base_body = 'left_shoulder_start',
         end_body  = 'left_hand',
+        model=model,
+    )
+    right_arm_chain = Chain.from_mujoco(
+        base_body = 'right_shoulder_start',
+        end_body  = 'right_hand',
         model=model,
     )
     po2D = PoseObserver2D(0.4, 'accurate', 'primitives/videos/wave-flipped.mp4')
@@ -82,21 +88,37 @@ def wave():
         left_arm_sites = np.concatenate(
             [np.zeros((3, 1)), po2D.left_arm], axis=1
         ) + np.array([0.0, 0.1, 1.1])
+        right_arm_sites = np.concatenate(
+            [np.zeros((3, 1)), po2D.right_arm], axis=1
+        ) + np.array([0.0, -0.1, 1.1])
         sol = imitate(
             reference_sites = left_arm_sites,
-            robot_chain     = g1_chain,
-            q_init          = imitate_q,
+            robot_chain     = left_arm_chain,
+            q_init          = left_q,
             density=20
         )
-        imitate_q = sol.x
+        left_q = sol.x.copy()
+        
+        sol = imitate(
+            reference_sites = right_arm_sites,
+            robot_chain     = right_arm_chain,
+            q_init          = right_q,
+            density=20
+        )
+        right_q = sol.x.copy()
         po2D.show_keypoints()
-        left_arm_traj.append(imitate_q)
+        left_arm_traj.append(left_q)
+        right_arm_traj.append(right_q)
     
     left_arm_traj = np.array(left_arm_traj)
+    right_arm_traj = np.array(right_arm_traj)
     traj = np.zeros((left_arm_traj.shape[0], 32))
     
     for idx, name in enumerate(G1_LEFT_ARM):
         traj[:, -7 + name2idx[name]] = left_arm_traj[:, idx]
+    
+    for idx, name in enumerate(G1_RIGHT_ARM):
+        traj[:, -7 + name2idx[name]] = right_arm_traj[:, idx]
         
     df = pd.DataFrame(data=traj, columns=G1_JOINTS)
     return df
