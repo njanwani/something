@@ -14,7 +14,8 @@ G1_LEFT_ARM_IDX = np.arange(15, 22) + 7
 
 # Load the Unitree G1 model
 path = Path('xmls/scene_only_g1.xml')
-model = mujoco.MjModel.from_xml_string(path.read_text())
+# model = mujoco.MjModel.from_xml_string(path.read_text())
+model = mujoco.MjModel.from_xml_path('xmls/scene.xml')
 data = mujoco.MjData(model)
 
 HZ = 50

@@ -160,9 +160,17 @@
             <geom class="visual" mesh="torso_link"/>
             <geom class="collision" mesh="torso_link"/>
             <geom pos="0.0039635 0 -0.044" quat="1 0 0 0" class="visual" material="black" mesh="logo_link"/>
-            <geom pos="0.0039635 0 -0.044" quat="1 0 0 0" class="collision" material="black" mesh="logo_link"/>
-            <geom pos="0.0039635 0 -0.044" quat="1 0 0 0" class="visual" material="black" mesh="head_link"/>
-            <geom pos="0.0039635 0 -0.044" quat="1 0 0 0" class="collision" material="black" mesh="head_link"/>
+            <!-- <geom pos="0.0039635 0 -0.044" quat="1 0 0 0" class="collision" material="black" mesh="logo_link"/> -->
+            <body pos="0.0039635 0 -0.044" euler="0 0 0">
+              <inertial pos="0 0 0" quat="1 0 0 0" mass="0.086" diaginertia="0.121847 0.109825 0.0273735"/>
+              <joint name="head_pitch_joint" pos="0 0 0.33" axis="0 1 0" range="-0.52 0.52" actuatorfrcrange="-50 50"/>
+              <joint name="head_yaw_joint" pos="0 0 0.33" axis="0 0 1" range="-0.52 0.52" actuatorfrcrange="-50 50"/>
+              <body>
+                <inertial pos="0 0 0" quat="1 0 0 0" mass="0.086" diaginertia="0.121847 0.109825 0.0273735"/>
+                  <geom class="visual" material="black" mesh="head_link"/>
+                </body>
+            </body>
+            <!-- <geom pos="0.0039635 0 -0.044" quat="1 0 0 0" class="collision" material="black" mesh="head_link"/> -->
             <site name="imu_in_torso" pos="-0.03959 -0.00224 0.14792" size="0.01"/>
             <body name="shoulder_start" pos="0.0039563 0.10022 0.24778"
               quat="0.990264 0.139201 1.38722e-05 -9.86868e-05">
@@ -328,23 +336,4 @@
     <accelerometer site="imu_in_pelvis" name="imu-pelvis-linear-acceleration" cutoff="157" noise="0.01"/>
   </sensor>
 
-  <keyframe>
-    <key name="stand"
-      qpos="
-      0 0 0.79
-      1 0 0 0
-      0 0 0 0 0 0
-      0 0 0 0 0 0
-      0 0 0
-      0.2 0.2 0 1.28 0 0 0
-      0.2 -0.2 0 1.28 0 0 0
-      "
-      ctrl="
-      0 0 0 0 0 0
-      0 0 0 0 0 0
-      0 0 0
-      0.2 0.2 0 1.28 0 0 0
-      0.2 -0.2 0 1.28 0 0 0
-      "/>
-  </keyframe>
 </mujoco>
