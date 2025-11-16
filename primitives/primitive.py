@@ -76,7 +76,9 @@ class Transition(Primitive):
 
 # class Nod(Primitive):
 #     raise NotImplementedError()
-
+# NodYes
+# NodNo
+# NodAcknowledge
 # class Guide(Primitive):
 #     raise NotImplementedError()
 
@@ -105,5 +107,6 @@ if __name__ == '__main__':
         Wave(duration=2),
         Rest(duration=1)
     )
+
     for t in range(4):
         print(p(t))
