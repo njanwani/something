@@ -73,9 +73,6 @@ class Transition(Primitive):
     @classmethod
     def description(self):
         return 'Transitions between one primitive to the next'
-    
-# class Wave(Primitive):
-#     raise NotImplementedError()
 
 # class Nod(Primitive):
 #     raise NotImplementedError()
@@ -83,13 +80,30 @@ class Transition(Primitive):
 # class Guide(Primitive):
 #     raise NotImplementedError()
 
+class Trajectory:
+    
+    def __init__(self, *primitives: list[Primitive]):
+        self.primitives = primitives
+        self.num_primitives = len(primitives)
+        
+    def __call__(self, t):
+        t0 = 0
+        idx = 0
+        while True:
+            if t > t0 + self.primitives[idx].duration and idx < self.num_primitives - 1:
+                idx += 1
+                t0 += self.primitives[idx].duration
+            else:
+                cmd = self.primitives[idx].move(t - t0)
+                break
+        
+        return cmd
 
 if __name__ == '__main__':
-    p = Rest(duration=1)
-    print(p.traj)
-    print()
-    print(p.move(0))
-    print()
-    print(p.move(0.5))
-    print()
-    print(p.move(1))
+    p = Trajectory(
+        Rest(duration=1),
+        Wave(duration=2),
+        Rest(duration=1)
+    )
+    for t in range(4):
+        print(p(t))

@@ -25,7 +25,6 @@ class PoseObserver2D:
         except Exception:
             # If any unexpected error happens while checking backends, fall back to cpu
             device = 'cpu'
-
         # Load the model (do not pass device to constructor because some ultralytics
         # versions do not accept a 'device' kwarg). After loading, try to move it to
         # the selected device using common interfaces and fall back to CPU on failure.

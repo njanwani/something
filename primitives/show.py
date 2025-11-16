@@ -25,7 +25,8 @@ name2idx = create_name2idx(model)
 hz = 50
 dt = 1.0 / hz
 # motion = pm.Rest(duration=4)
-motion = pm.Wave(duration=4)
+DURATION = 4
+motion = pm.Wave(duration=DURATION)
 # motion = Point(speed_scale=3.0)
 cam_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_CAMERA, "side_view")
 
@@ -37,7 +38,7 @@ while viewer.is_alive:
     
     # Human movement
     t = data.time
-    g1_cmd = motion.move(t)
+    g1_cmd = motion.move(t % DURATION)
     qpos = apply_named_cmd(name2idx, data.qpos, g1_cmd)
     
     # Robot movement

@@ -77,7 +77,7 @@ def wave():
         end_body  = 'right_hand',
         model=model,
     )
-    po2D = PoseObserver2D(0.4, 'accurate', 'primitives/videos/wave-flipped.mp4')
+    po2D = PoseObserver2D(0.4, 'accurate', 'primitives/videos/wave.mp4')
     ret = True
     left_arm_traj  = []
     right_arm_traj = []
@@ -120,7 +120,14 @@ def wave():
     for idx, name in enumerate(G1_RIGHT_ARM):
         traj[:, -7 + name2idx[name]] = right_arm_traj[:, idx]
         
-    df = pd.DataFrame(data=traj, columns=G1_JOINTS)
+    # post process
+    post_traj = np.zeros_like(traj)
+    post_traj[0] = traj[0]
+    SMOOTH = 3
+    for i in range(1, traj.shape[0]):
+        post_traj[i] = post_traj[i - 1] + 1 / SMOOTH * (traj[i] - post_traj[i - 1])
+        
+    df = pd.DataFrame(data=post_traj, columns=G1_JOINTS)
     return df
 
 
