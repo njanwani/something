@@ -85,3 +85,4 @@ class PoseObserver2D:
     @property
     def right_arm(self):
         return self.arm(self.right_arm_pxls)
+    
