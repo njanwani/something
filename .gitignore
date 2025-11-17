@@ -215,3 +215,4 @@ yolov8n-pose.pt
 MUJOCO_LOG.TXT
 yolov8l-pose.pt
 yolov8n-pose.pt
+*.mov
