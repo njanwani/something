@@ -1,14 +1,13 @@
 # from eval.scenario1 import wave_motion, interpolate_pose
-from eval.scenario2 import point_motion
 import mujoco
 import mujoco_viewer
 from pathlib import Path
-from eval.motion import Wave, Point
+from eval.motion import Wave
 from eval.find_stuff import create_name2idx
 
-G1_XYZ_ROOT = 'floating_base_joint_xyz'
+G1_XYZ_ROOT = "floating_base_joint_xyz"
 
-path = Path('xmls/scene.xml')
+path = Path("xmls/scene.xml")
 model = mujoco.MjModel.from_xml_string(path.read_text())
 data = mujoco.MjData(model)
 viewer = mujoco_viewer.MujocoViewer(model, data, hide_menus=True)
@@ -29,17 +28,17 @@ while viewer.is_alive:
     data.qpos[:] = 0
     data.qvel[:] = 0
     data.qacc[:] = 0
-    
+
     # Human movement
     t = data.time
     pos, quat = motion.interpolate_pose(t)
     data.qpos[0:3] = pos
     data.qpos[3:7] = quat
     data.qpos = motion.motion(t, data.qpos.copy())
-    
+
     # Robot movement
     data.qpos[name2idx[G1_XYZ_ROOT][2]] = 0.793
-    
+
     # Step + render
     mujoco.mj_step(model, data)
     viewer.render()

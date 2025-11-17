@@ -14,7 +14,6 @@ class LLMMotionController:
 
     MODELS = {
         "mini": "gpt-4o-mini",
-        "turbo": "gpt-3.5-turbo",
         "gpt4o": "gpt-4o",
         "gpt4": "gpt-4-turbo",
     }
@@ -81,6 +80,111 @@ class LLMMotionController:
         self.model = self.MODELS.get(model, model)
         self.skill_library: Dict[str, Dict[str, Any]] = {}
         self.conversation_history: List[Dict[str, str]] = []
+
+    def interpret_scenario_timeline(
+        self,
+        context: str,
+        available_primitives: Optional[Dict[str, str]] = None,
+        mode: str = "generate",
+    ) -> List[Dict[str, Any]]:
+        """
+        Interpret a scenario description and generate a timeline of robot actions.
+
+        Args:
+            context: Natural language description of scenario with timing
+            available_primitives: Dict of {name: description} for predefined motions
+            mode: "generate" (use LLM) or "predefine" (use primitives only)
+
+        Returns:
+            List of actions with start_time, duration, instruction, reasoning
+        """
+        print("\nInterpreting scenario context...\n")
+
+        # Add available primitives to prompt if using predefine mode
+        primitives_info = ""
+        if mode == "predefine" and available_primitives:
+            primitives_info = "\n\nAvailable predefined motions:\n"
+            for name, desc in available_primitives.items():
+                primitives_info += f"- {name}: {desc}\n"
+            primitives_info += "\nYou MUST choose from these predefined motions only. Use the exact primitive name in the 'instruction' field."
+            primitives_info += "\nYou can control the speed by adjusting the 'duration' field - shorter duration = faster motion, longer duration = slower motion."
+
+        system_prompt = f"""You are a social robot behavior planner. Given a scenario description with timing, 
+determine what socially appropriate robot motions should occur and when.
+{primitives_info}
+
+Output a JSON array of actions with this format:
+[
+  {{
+    "start_time": 0.0,
+    "duration": 2.0,
+    "instruction": "Stand in idle position",
+    "reasoning": "Wait for human to enter"
+  }},
+  {{
+    "start_time": 3.0,
+    "duration": 2.5,
+    "instruction": "Wave hello enthusiastically",
+    "reasoning": "Human waved at 3s, respond with greeting"
+  }}
+]
+
+Key principles:
+- Robot should respond to human actions with appropriate social timing
+- Include brief idle/transition periods between actions
+- Be expressive and socially appropriate
+- Consider spatial relationships (facing, proximity)
+- Timing should be realistic (not too fast, not too slow)
+"""
+
+        user_prompt = f"""Scenario context:
+{context}
+
+Analyze this scenario and determine what robot motions should occur at what times. 
+Output ONLY the JSON array, no other text."""
+
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.7,
+                max_tokens=1000,
+            )
+
+            content = response.choices[0].message.content.strip()
+
+            # Extract JSON from potential markdown code blocks
+            if "```json" in content:
+                content = content.split("```json")[1].split("```")[0].strip()
+            elif "```" in content:
+                content = content.split("```")[1].split("```")[0].strip()
+
+            actions = json.loads(content)
+
+            print("Planned robot actions:")
+            for i, action in enumerate(actions):
+                print(
+                    f"   [{i + 1}] {action['start_time']}s - {action['start_time'] + action['duration']}s: {action['instruction']}"
+                )
+                print(f"       Reasoning: {action['reasoning']}")
+            print()
+
+            return actions
+
+        except Exception as e:
+            print(f"ERROR: Error interpreting scenario: {e}")
+            # Fallback to simple wave action
+            return [
+                {
+                    "start_time": 2.0,
+                    "duration": 3.0,
+                    "instruction": "Wave hello",
+                    "reasoning": "Default greeting behavior",
+                }
+            ]
 
     def generate_expressive_motion(
         self,

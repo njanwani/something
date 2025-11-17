@@ -1,0 +1,1 @@
+A person enters the room at 0 seconds. They walk toward the robot and stop in front of it at 2 seconds. The person smiles and waves hello at 3 seconds. Then the person turns and walks away at 7 seconds.

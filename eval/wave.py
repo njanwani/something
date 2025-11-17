@@ -19,8 +19,8 @@ def update_pos(t, _model, _data):
     _data.qpos[25] = 0.3 * np.sin(2 * np.pi * 1 / PERIOD * t)
     _data.qpos[30] = -0.178
     _data.qpos[32] = 1.4
-    _data.qvel[:]  = np.zeros(_model.nv)
-    _data.qacc[:]  = np.zeros(_model.nv)
+    _data.qvel[:] = np.zeros(_model.nv)
+    _data.qacc[:] = np.zeros(_model.nv)
     _data.qpos[-6:] = ARM_POS.copy()
     data.ctrl = data.qpos[7:]
     return _data

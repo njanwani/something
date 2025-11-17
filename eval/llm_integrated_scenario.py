@@ -34,7 +34,7 @@ def generate_llm_motions():
     for motion in motions_to_generate:
         result = controller.generate_expressive_motion(**motion)
         results.append(result)
-        print(f"✓ Generated: {result['function_name']}")
+        print(f"[OK] Generated: {result['function_name']}")
 
     return controller, results
 
@@ -225,7 +225,7 @@ def dispatch_motion(t, qpos):
 def run_simulation():
     """Run simulation."""
     path = Path("xmls/scene.xml")
-    model = mujoco.MjModel.from_xml_string(path.read_text())
+    model = mujoco.MjModel.from_xml_path(path.as_posix())
     data = mujoco.MjData(model)
 
     viewer = mujoco_viewer.MujocoViewer(model, data)

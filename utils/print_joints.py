@@ -4,6 +4,7 @@ from pathlib import Path
 # Load your model
 xml = Path("xmls/scene.xml")
 
+
 def create_name2idx(model):
     name2idx = {}
     qpos_idx = 0  # running index into qpos
@@ -30,15 +31,17 @@ def create_name2idx(model):
 
     return name2idx
 
+
 def apply_named_cmd(name2idx, qpos, cmd):
     for key in cmd.keys():
         idx = name2idx[key]
         qpos[idx] = cmd[key]
-    
+
     return qpos
 
-if __name__ == '__main__':
-    model = mujoco.MjModel.from_xml_path('xmls/scene.xml')
+
+if __name__ == "__main__":
+    model = mujoco.MjModel.from_xml_path("xmls/scene.xml")
 
     print("Total joints:", model.njnt)
     print("=" * 40)

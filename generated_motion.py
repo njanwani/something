@@ -5,7 +5,6 @@ acknowledge_passerby_motion: Acknowledge the person walking by
 import numpy as np
 
 
-
 def acknowledge_passerby_motion(t, qpos):
     """Animate robot to acknowledge a passerby with head nod, smile, and wave."""
     # Default positions for left and right arms

@@ -1,0 +1,1 @@
+A person approaches the robot at 0 seconds with a confused expression. They stop at 2 seconds and ask a question. The person points to their left at 4 seconds, asking "is it over there?". They wait for a response, then nod and walk in that direction at 8 seconds.
