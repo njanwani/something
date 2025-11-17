@@ -7,6 +7,7 @@ from eval.motion import Wave, Point
 from utils.print_joints import create_name2idx, apply_named_cmd
 import primitives.primitive as pm
 import time
+from eval.motion import Wave, Point
 
 G1_XYZ_ROOT = 'floating_base_joint_xyz'
 HZ = 50
@@ -25,16 +26,18 @@ name2idx = create_name2idx(model)
 hz = 50
 dt = 1.0 / hz
 begin = pm.Rest(duration=1)
-wave  = pm.Wave(duration=2)
+wave  = pm.Wave(duration=3)
 end   = pm.Rest(duration=1)
 
-motion = pm.Trajectory(
+g1_motion = pm.Trajectory(
     begin,
-    pm.Transition(begin, wave, duration=0.5),
+    pm.Transition(begin, wave, duration=1),
     wave,
-    pm.Transition(wave, end, duration=0.5),
+    pm.Transition(wave, end, duration=1),
     end
 )
+
+human_motion = Wave(speed_scale=3.0, name2idx=name2idx)
 # motion = Point(speed_scale=3.0)
 cam_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_CAMERA, "side_view")
 
@@ -46,8 +49,13 @@ while viewer.is_alive:
     
     # Human movement
     t = data.time
-    g1_cmd = motion(t % motion.duration)
-    qpos = apply_named_cmd(name2idx, data.qpos, g1_cmd)
+    g1_cmd = g1_motion(t)
+    
+    pos, quat = human_motion.interpolate_pose(t)
+    data.qpos[0:3] = pos
+    data.qpos[3:7] = quat
+    qpos = human_motion.motion(t, data.qpos)
+    qpos = apply_named_cmd(name2idx, qpos, g1_cmd)
     
     # Robot movement
     data.qpos[name2idx[G1_XYZ_ROOT][2]] = 0.793

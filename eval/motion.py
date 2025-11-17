@@ -19,21 +19,21 @@ class HumanoidScenario:
         elbow       = -1.75
     )
     
-    def __init__(self, keyframes, z_height):
+    def __init__(self, keyframes, z_height, name2idx):
         self.keyframes = keyframes
         self.z_height = z_height
         
         # Right arm joints
-        self.shoulder1_r = 22
-        self.shoulder2_r = 23
-        self.shoulder3_r = 24
-        self.elbow_r     = 25
+        self.shoulder1_r = name2idx['shoulder1_right']
+        self.shoulder2_r = name2idx['shoulder2_right']
+        self.shoulder3_r = name2idx['shoulder3_right']
+        self.elbow_r     = name2idx['elbow_right']
 
         # Left arm joints
-        self.shoulder1_l = 26
-        self.shoulder2_l = 27
-        self.shoulder3_l = 28
-        self.elbow_l     = 29
+        self.shoulder1_l = name2idx['shoulder1_left']
+        self.shoulder2_l = name2idx['shoulder2_left']
+        self.shoulder3_l = name2idx['shoulder3_left']
+        self.elbow_l     = name2idx['elbow_left']
     
     @classmethod
     def yaw_to_quat(cls, yaw):
@@ -77,7 +77,7 @@ class HumanoidScenario:
                 pos = np.append(pos, self.z_height)
                 return pos, quat
         pos, yaw = self.keyframes[-1][1], self.keyframes[-1][2]
-        pos.append(self.z_height)
+        pos = np.append(pos, self.z_height)
         return pos, HumanoidScenario.yaw_to_quat(yaw)
     
     
@@ -91,6 +91,7 @@ class Wave(HumanoidScenario):
     )
     def __init__(
         self,
+        name2idx: dict,
         move_duration      = 2.0,
         turn_duration      = 0.5,
         pause_duration     = 3.0,
@@ -131,7 +132,7 @@ class Wave(HumanoidScenario):
         t += 2 * move_duration
         
         keyframes.append((t, np.array([-6.0, 1.5]), -np.pi))
-        super().__init__(keyframes, z_height)
+        super().__init__(keyframes, z_height, name2idx)
         
         turn_buffer = turn_buffer / speed_scale           # short delay after turn before waving
         self.pre_wave_duration = pre_wave_duration / speed_scale     # smooth lift before waving

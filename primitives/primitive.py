@@ -98,11 +98,12 @@ class Trajectory:
         t0 = 0
         idx = 0
         while True:
-            if idx < self.num_primitives - 2 and t > t0 + self.primitives[idx + 1].duration:
+            if t > t0 + self.primitives[idx].duration:
                 idx += 1
                 t0 += self.primitives[idx].duration
             else:
-                cmd = self.primitives[idx + 1].move(t - t0)
+                print(idx, t)
+                cmd = self.primitives[idx].move(t - t0)
                 break
         
         return cmd

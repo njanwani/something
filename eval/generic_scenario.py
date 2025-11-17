@@ -1,15 +1,13 @@
-# from eval.scenario1 import wave_motion, interpolate_pose
-from eval.scenario2 import point_motion
 import mujoco
 import mujoco_viewer
 from pathlib import Path
 from eval.motion import Wave, Point
-from eval.find_stuff import create_name2idx
+from utils.print_joints import create_name2idx
 
 G1_XYZ_ROOT = 'floating_base_joint_xyz'
 
 path = Path('xmls/scene.xml')
-model = mujoco.MjModel.from_xml_string(path.read_text())
+model = mujoco.MjModel.from_xml_path(path.as_posix())
 data = mujoco.MjData(model)
 viewer = mujoco_viewer.MujocoViewer(model, data, hide_menus=True)
 viewer.cam = mujoco.MjvCamera()
@@ -21,7 +19,7 @@ name2idx = create_name2idx(model)
 
 hz = 50
 dt = 1.0 / hz
-motion = Wave(speed_scale=3.0)
+motion = Wave(speed_scale=3.0, name2idx=name2idx)
 # motion = Point(speed_scale=3.0)
 cam_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_CAMERA, "side_view")
 

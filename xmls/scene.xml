@@ -82,9 +82,8 @@
       </default>
     </default>
   </default>
-  <!-- <include file="humanoid/humanoid.xml"/> -->
+  <include file="humanoid/humanoid.xml"/>
   <include file="unitree_g1/g1.xml"/>
-  <!-- <include file="xmls/humanoid/humanoid.xml"/> -->
   <include file="table/table.xml"/>
   <include file="wall/wall.xml"/>
   
