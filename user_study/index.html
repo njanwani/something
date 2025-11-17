@@ -2,21 +2,48 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Study Redirect</title>
+  <title>HRI Project User Study</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      text-align: center;
+    }
+    button {
+      margin: 12px;
+      padding: 12px 20px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+  </style>
+
   <script>
-    window.onload = function() {
-      // 50/50 random assignment
-      var rand = Math.random();
-      
-      if (rand < 0.5) {
-        window.location.href = "https://forms.gle/1LCsLDTjUE6EZsMV9";
-      } else {
-        window.location.href = "https://forms.gle/Sh7BNWrYeKwNb8ab7";
+    const FORMS = {
+      scenario1: {
+        A: "https://forms.gle/6E9kPBWEqcrhX5TP9",
+        B: "https://forms.gle/Gpsoq2Hpy6YCSST99"
       }
+      // Space for the other scenarios
     };
+
+    function startScenario(scenarioName) {
+      let rand = Math.random() < 0.5 ? "A" : "B";
+      window.location.href = FORMS[scenarioName][rand];
+    }
   </script>
+
 </head>
+
 <body>
-  <p>Redirecting you to the study…</p>
+  <h2>User Study Best Group</h2>
+  <p>Select the scenario. You will be redirected to the Google form.</p>
+
+  <!-- Scenario buttons -->
+  <button onclick="startScenario('scenario1')">Scenario 1</button>
+  <br>
+
+  <p>Other scenarios will be added soon.</p>
 </body>
 </html>
