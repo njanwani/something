@@ -389,11 +389,15 @@ Generate a function that:
 6. Includes docstring
 
 IMPORTANT:
+- qpos is a numpy array - treat it as such throughout the function
 - Use numpy for calculations (imported as np)
 - Joint indices are fixed (see JOINT_INDICES above)
 - Always set ALL joints (left and right arms)
 - Use smooth interpolation functions like: s = 3*s**2 - 2*s**3 for smoothstep
 - The qpos array has indices 0-6 for base (pos + quat), then joint angles starting at index 7
+- When interpolating, use scalar arithmetic: qpos[i] = (1-s)*v0 + s*v1
+- Do NOT use list operations, list comprehensions, or convert qpos to a list
+- Always assign values directly to qpos indices: qpos[22] = value
 
 Format your response as JSON with keys:
 - function_name: name of the function

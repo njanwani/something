@@ -269,7 +269,7 @@ def run_scenario_visualization(controller: ScenarioMotionController, model, loop
             motion_fn, local_t = controller.get_motion_at_time(t)
 
             # Work with full qpos array with valid quaternions initialized
-            temp_qpos = np.zeros(model.nq)
+            temp_qpos = np.zeros(model.nq, dtype=np.float64)
             # Initialize both quaternions in temp array
             temp_qpos[3:7] = [1.0, 0.0, 0.0, 0.0]  # Humanoid
             temp_qpos[robot_nq_start + 3 : robot_nq_start + 7] = [
@@ -280,7 +280,12 @@ def run_scenario_visualization(controller: ScenarioMotionController, model, loop
             ]  # Robot
 
             # Apply robot motion (modifies robot joint angles, not base)
-            temp_qpos = motion_fn(local_t, temp_qpos.copy())
+            try:
+                temp_qpos = motion_fn(local_t, temp_qpos.copy())
+            except Exception as e:
+                print(f"\nERROR in robot motion function: {e}")
+                # Use default motion as fallback
+                temp_qpos = controller.default_motion(local_t, temp_qpos.copy())
 
             # Set robot base position and orientation (after motion so it doesn't get overwritten)
             temp_qpos[robot_nq_start + 0 : robot_nq_start + 3] = [
