@@ -87,7 +87,7 @@ class Trajectory:
     def __init__(self, *primitives: list[Primitive]):
         self.primitives = primitives
         self.num_primitives = len(primitives)
-        print(self.num_primitives)
+        # quit()
         dur = 0
         for p in self.primitives:
             dur += p.duration
@@ -98,9 +98,9 @@ class Trajectory:
         t0 = 0
         idx = 0
         while True:
-            if t > t0 + self.primitives[idx].duration:
-                idx += 1
+            if idx < self.num_primitives - 1 and t > t0 + self.primitives[idx].duration:
                 t0 += self.primitives[idx].duration
+                idx += 1
             else:
                 print(idx, t)
                 cmd = self.primitives[idx].move(t - t0)
