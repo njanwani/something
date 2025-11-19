@@ -16,7 +16,8 @@ HZ = 50
 path = Path('xmls/scene.xml')
 model = mujoco.MjModel.from_xml_path(path.as_posix())
 data = mujoco.MjData(model)
-viewer = mujoco_viewer.MujocoViewer(model, data, hide_menus=True, mode='offscreen')
+viewer_mode = 'offscreen'
+viewer = mujoco_viewer.MujocoViewer(model, data, hide_menus=True, mode=viewer_mode)
 viewer.cam = mujoco.MjvCamera()
 viewer.cam.distance = 5
 viewer.cam.azimuth = 210
@@ -26,24 +27,50 @@ name2idx = create_name2idx(model)
 
 hz = 50
 dt = 1.0 / hz
-begin = pm.Rest(duration=2)
-wave  = pm.Wave(duration=4)
-end   = pm.Rest(duration=2)
+mode = 'llm'
+if mode == 'oracle':
+    begin = pm.Rest(duration=2)
+    wave  = pm.Wave(duration=4)
+    end   = pm.Rest(duration=2)
 
-g1_motion = pm.Trajectory(
-    begin,
-    pm.Transition(begin, wave, duration=0.5),
-    wave,
-    pm.Transition(wave, end, duration=0.5),
-    end
-)
+    g1_motion = pm.Trajectory(
+        begin,
+        pm.Transition(begin, wave, duration=0.5),
+        wave,
+        pm.Transition(wave, end, duration=0.5),
+        end
+    )
+else:
+    # wait  = pm.Rest(duration=2)
+    # rest  = pm.Rest(duration=2)
+    # wave  = pm.Wave(duration=2)
+    # end   = pm.Rest(duration=2)
+
+    # g1_motion = pm.Trajectory(
+    #     wait,
+    #     rest,
+    #     wave,
+    #     end
+    # )
+    rest          = pm.Rest(duration=2)
+    frantic_wave  = pm.FranticWave(duration=1.5)
+    end           = pm.Rest(duration=2)
+    wave          = pm.Wave(duration=1)
+    
+
+    g1_motion = pm.Trajectory(
+        rest,
+        frantic_wave,
+        end,
+        wave
+    )
 
 human_motion = Wave(speed_scale=1.0, name2idx=name2idx)
 # motion = Point(speed_scale=3.0)
 cam_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_CAMERA, "side_view")
 frames = []
 while viewer.is_alive:
-    if data.time > g1_motion.duration:
+    if data.time > 13:
         break
     start = time.time()
     data.qpos[:] = 0
@@ -67,10 +94,15 @@ while viewer.is_alive:
     t0 = data.time
     while data.time - t0 < 1 / HZ:
         mujoco.mj_step(model, data)
-    # viewer.render()
-    frames.append(viewer.read_pixels())
-    # time.sleep(max(1 / HZ - (time.time() - start), 0))
+    
+    if viewer_mode == 'window':
+        viewer.render()
+    else:
+        frames.append(viewer.read_pixels())
+    time.sleep(max(1 / HZ - (time.time() - start), 0))
+    
 
-mp.write_video("output.mp4", frames, fps=30)
+if viewer_mode == 'offscreen':
+    mp.write_video(f"{mode}.mp4", frames, fps=30)
 
 viewer.close()

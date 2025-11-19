@@ -56,6 +56,31 @@ class Wave(Primitive):
     def description(cls):
         return 'TBD'
 
+class FranticWave(Primitive):
+    
+    def __init__(self, duration):
+        super().__init__(
+            pd.read_csv(Path(r'primitives/data/Frantic_Wave.csv'), index_col=0),
+            duration
+        )
+    
+    @classmethod
+    def description(cls):
+        return 'TBD'
+    
+
+class DoubleWave(Primitive):
+    
+    def __init__(self, duration):
+        super().__init__(
+            pd.read_csv(Path(r'primitives/data/Double_Wave.csv'), index_col=0),
+            duration
+        )
+    
+    @classmethod
+    def description(cls):
+        return 'TBD'
+
 class Transition(Primitive):
     
     def __init__(
