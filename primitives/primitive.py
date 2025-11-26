@@ -99,14 +99,14 @@ class Transition(Primitive):
     def description(self):
         return 'Transitions between one primitive to the next'
 
-# class Nod(Primitive):
-#     raise NotImplementedError()
-# NodYes
-# NodNo
-# NodAcknowledge
-# class Guide(Primitive):
-#     raise NotImplementedError()
-
+PRIMITIVES = [
+    Rest,
+    Wave,
+    FranticWave,
+    DoubleWave,
+    Transition
+]
+    
 class Trajectory:
     
     def __init__(self, *primitives: list[Primitive]):
