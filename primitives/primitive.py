@@ -56,6 +56,31 @@ class Wave(Primitive):
     def description(cls):
         return 'TBD'
 
+class FranticWave(Primitive):
+    
+    def __init__(self, duration):
+        super().__init__(
+            pd.read_csv(Path(r'primitives/data/Frantic_Wave.csv'), index_col=0),
+            duration
+        )
+    
+    @classmethod
+    def description(cls):
+        return 'TBD'
+    
+
+class DoubleWave(Primitive):
+    
+    def __init__(self, duration):
+        super().__init__(
+            pd.read_csv(Path(r'primitives/data/Double_Wave.csv'), index_col=0),
+            duration
+        )
+    
+    @classmethod
+    def description(cls):
+        return 'TBD'
+
 class Transition(Primitive):
     
     def __init__(
@@ -64,9 +89,9 @@ class Transition(Primitive):
         next: Primitive,
         duration: float
     ):
-        trajectory = np.array([
-            prev.last_position,
-            next.first_position
+        trajectory = pd.concat([
+            prev.last_position.to_frame().T,
+            next.first_position.to_frame().T
         ])
         super().__init__(trajectory, duration)
     
@@ -74,33 +99,41 @@ class Transition(Primitive):
     def description(self):
         return 'Transitions between one primitive to the next'
 
-# class Nod(Primitive):
-#     raise NotImplementedError()
-# NodYes
-# NodNo
-# NodAcknowledge
-# class Guide(Primitive):
-#     raise NotImplementedError()
-
+PRIMITIVES = [
+    Rest,
+    Wave,
+    FranticWave,
+    DoubleWave,
+    Transition
+]
+    
 class Trajectory:
     
     def __init__(self, *primitives: list[Primitive]):
         self.primitives = primitives
         self.num_primitives = len(primitives)
+        # quit()
+        dur = 0
+        for p in self.primitives:
+            dur += p.duration
         
+        self.duration = dur
+            
     def __call__(self, t):
         t0 = 0
         idx = 0
         while True:
-            if t > t0 + self.primitives[idx].duration and idx < self.num_primitives - 1:
-                idx += 1
+            if idx < self.num_primitives - 1 and t > t0 + self.primitives[idx].duration:
                 t0 += self.primitives[idx].duration
+                idx += 1
             else:
+                print(idx, t)
                 cmd = self.primitives[idx].move(t - t0)
                 break
         
         return cmd
-
+    
+        
 if __name__ == '__main__':
     p = Trajectory(
         Rest(duration=1),
