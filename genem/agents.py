@@ -9,6 +9,7 @@ from openai import OpenAI
 import openai
 import time
 from primitives.primitive import Primitive
+import re
 
 class Chatbot:
     def __init__(self, system_prompt=None, model="gpt-4.1", api_key=None, max_retries=3):
@@ -95,8 +96,9 @@ class TrajectoryGenerator(Chatbot):
     ):
         with open(prompt, 'r') as f:
             system_prompt = f.read()
+        self.primitives = primitives
         primitives_descriptions = [
-            p.name() + ': ' + p.description() for p in primitives
+            p.get_name() + ': ' + p.get_description() for p in primitives
         ]
         primitives_descriptions = ['PRIMITIVES LIST'] + primitives_descriptions
         final_system_prompt = system_prompt + '\n' + '\n'.join(primitives_descriptions)
@@ -104,13 +106,38 @@ class TrajectoryGenerator(Chatbot):
             system_prompt = final_system_prompt,
             api_key       = api_key
         )
+    def parse_actions(self, s):
+        pattern = r"-\s*([A-Za-z_]+)\[([0-9]*\.?[0-9]+)\]"
+        actions = []
+        durations = []
+        
+        for action, duration in re.findall(pattern, s):
+            actions.append(action)
+            durations.append(float(duration))
+        
+        return actions, durations
     
-    def query(self, human_scenario):
-        response = super().query(human_scenario)
+    def get_primitive_list(self, primitives_list, durations_list):
+        ret = []
+        for p, d in zip(primitives_list, durations_list):
+            for p_obj in self.primitives:
+                if p == p_obj.get_name():
+                    ret.append(p_obj(d))
+                    break
+        
+        return ret
+
+    def query(self, expressive_description):
+        response = super().query(expressive_description)
         parts = response.split('===')
         if len(parts) != 2:
             raise Exception(f'Illegal prompt response {response}')
-        return response
+        
+        print(parts[-1])
+        actions, durations = self.parse_actions(parts[-1])
+        print(actions, durations)
+        p_list = self.get_primitive_list(actions, durations)
+        return p_list
 
 
 if __name__ == '__main__':
@@ -132,7 +159,7 @@ if __name__ == '__main__':
         )
         se_response = se.query('a human walks into the room for 1 second, waves for 1 second, then leaves in 1 second')
         print(se_response)
-        print('Now generating trajectory...\n\n')
+        print('Now generating trajectory...')
         tg = TrajectoryGenerator(
             api_key=os.getenv("OPENAI_API_KEY"),
             primitives=PRIMITIVES

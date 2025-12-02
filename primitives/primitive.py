@@ -21,11 +21,11 @@ class Primitive:
         return cmd
     
     @classmethod
-    def description(cls):
+    def get_description(cls):
         raise NotImplementedError()
     
     @classmethod
-    def name(cls):
+    def get_name(cls):
         raise NotImplementedError()
     
     @property
@@ -45,11 +45,11 @@ class Rest(Primitive):
         )
     
     @classmethod
-    def name(cls):
+    def get_name(cls):
         return 'Rest'
     
     @classmethod
-    def description(cls):
+    def get_description(cls):
         return 'Robot rests at an idle position.'
     
 class Wave(Primitive):
@@ -61,11 +61,11 @@ class Wave(Primitive):
         )
     
     @classmethod
-    def name(cls):
+    def get_name(cls):
         return 'Wave'
     
     @classmethod
-    def description(cls):
+    def get_description(cls):
         return 'Robot waves casually with right hand.'
 
 class FranticWave(Primitive):
@@ -77,11 +77,11 @@ class FranticWave(Primitive):
         )
     
     @classmethod
-    def name(cls):
+    def get_name(cls):
         return 'FranticWave'
     
     @classmethod
-    def description(cls):
+    def get_description(cls):
         return 'Robot waves frantically with right hand.'
     
 
@@ -94,11 +94,11 @@ class DoubleWave(Primitive):
         )
     
     @classmethod
-    def name(cls):
+    def get_name(cls):
         return 'DoubleWave'
     
     @classmethod
-    def description(cls):
+    def get_description(cls):
         return 'Robot waves both hands rapidly.'
 
 class Transition(Primitive):
@@ -116,12 +116,28 @@ class Transition(Primitive):
         super().__init__(trajectory, duration)
     
     @classmethod
-    def name(cls):
+    def get_name(cls):
         return 'Transition'
     
     @classmethod
-    def description(self):
+    def get_description(self):
         return 'Transitions between one primitive to the next'
+    
+def add_transitions_to_list(
+    primitives: list[Primitive]
+):
+    ret = []
+    for idx in range(len(primitives) - 1):
+        ret.append(primitives[idx])
+        ret.append(
+            Transition(
+                prev     = primitives[idx],
+                next     = primitives[idx + 1],
+                duration = 0.1
+            )
+        )
+    ret.append(primitives[-1])
+    return ret
 
 PRIMITIVES = [
     Rest,
@@ -136,7 +152,6 @@ class Trajectory:
     def __init__(self, *primitives: list[Primitive]):
         self.primitives = primitives
         self.num_primitives = len(primitives)
-        # quit()
         dur = 0
         for p in self.primitives:
             dur += p.duration
