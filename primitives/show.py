@@ -3,11 +3,11 @@ from eval.scenario2 import point_motion
 import mujoco
 import mujoco_viewer
 from pathlib import Path
-from eval.motion import Wave, Point
+from scenarios.motion import Wave, Point
 from utils.print_joints import create_name2idx, apply_named_cmd
 import primitives.primitive as pm
 import time
-from eval.motion import Wave, Point
+from scenarios.motion import Wave, Point
 import mediapy as mp
 
 G1_XYZ_ROOT = 'floating_base_joint_xyz'
@@ -16,7 +16,7 @@ HZ = 50
 path = Path('xmls/scene.xml')
 model = mujoco.MjModel.from_xml_path(path.as_posix())
 data = mujoco.MjData(model)
-viewer_mode = 'offscreen'
+viewer_mode = ['window', 'offscreen'][0]
 viewer = mujoco_viewer.MujocoViewer(model, data, hide_menus=True, mode=viewer_mode)
 viewer.cam = mujoco.MjvCamera()
 viewer.cam.distance = 5

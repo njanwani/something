@@ -1,7 +1,7 @@
 import mujoco
 import mujoco_viewer
 from pathlib import Path
-from eval.motion import Wave, Point
+from scenarios.motion import Wave, Point
 from utils.print_joints import create_name2idx
 
 G1_XYZ_ROOT = 'floating_base_joint_xyz'
