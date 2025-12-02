@@ -46,10 +46,11 @@ elif mode == 'genem':
     print('generating trajectory...')
     se = agi.SocialExpression()
     tg = agi.TrajectoryGenerator(pm.PRIMITIVES)
-    expressive_description = se.query(human_motion.generate_motion_description())
-    primitives = tg.query(expressive_description)
+    
+    expressive_description      = se.query(human_motion.generate_motion_description())
+    primitives                  = tg.query(expressive_description)
     primitives_with_transitions = pm.add_transitions_to_list(primitives)
-    g1_motion = pm.Trajectory(*primitives_with_transitions)
+    g1_motion                   = pm.Trajectory(*primitives_with_transitions)
 
 cam_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_CAMERA, "side_view")
 frames = []
