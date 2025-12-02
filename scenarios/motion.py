@@ -2,16 +2,13 @@ import numpy as np
 
 
 class HumanoidScenario:
-    # -----------------------------------------------------
-    # Default arm poses (from pointing code)
-    # -----------------------------------------------------
+    # Default arm poses
     left_default = dict(
         shoulder1   = 0.855,
         shoulder2   = -0.611,
         shoulder3   = -0.244,
         elbow       = -1.75
     )
-
     right_default = dict(
         shoulder1   = 0.75,
         shoulder2   = -0.558,
@@ -71,10 +68,10 @@ class HumanoidScenario:
             if t0 <= t <= t1:
                 s = (t - t0) / (t1 - t0)
                 pos = (1 - s) * pos0 + s * pos1
-                q0 = HumanoidScenario.yaw_to_quat(yaw0)
-                q1 = HumanoidScenario.yaw_to_quat(yaw1)
-                quat = HumanoidScenario.quat_slerp(q0, q1, s)
-                pos = np.append(pos, self.z_height)
+                q0    = HumanoidScenario.yaw_to_quat(yaw0)
+                q1    = HumanoidScenario.yaw_to_quat(yaw1)
+                quat  = HumanoidScenario.quat_slerp(q0, q1, s)
+                pos   = np.append(pos, self.z_height)
                 return pos, quat
         pos, yaw = self.keyframes[-1][1], self.keyframes[-1][2]
         pos = np.append(pos, self.z_height)
@@ -104,9 +101,9 @@ class Wave(HumanoidScenario):
         wave_amp           = 0.5,
         z_height           = 1.28,
     ):
-        move_duration /= speed_scale
-        turn_duration /= speed_scale
-        pause_duration /= speed_scale
+        self.move_duration /= speed_scale
+        self.turn_duration /= speed_scale
+        self.pause_duration /= speed_scale
         keyframes = []
         t = 0.0
 
@@ -144,7 +141,17 @@ class Wave(HumanoidScenario):
 
         # Start waving *after* turning north and buffer delay
         self.wave_start = move_duration + turn_duration + turn_buffer
-        self.wave_end = self.wave_start + wave_duration                
+        self.wave_end = self.wave_start + wave_duration
+        
+    def generate_motion_description(self):
+        return f"""
+This scenario describes a person entering the room, waving at you, then leaving.
+1. A person moves into the frame for {self.move_duration} seconds.
+2. The person turns toward you for {self.turn_duration} seconds.
+3. The person waves for {self.pause_duration} seconds.
+4. The person turns away from you for {self.turn_duration} seconds.
+5. The person moves out of the frame for {self.move_duration} seconds.
+    """
     
     def motion(self, t, qpos):
         """Animate right arm wave during wave window with smooth transitions."""

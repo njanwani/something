@@ -1,44 +1,6 @@
 import numpy as np
+from scenarios.utils import quat_slerp, yaw_to_quat
 
-# # -----------------------------------------------------
-# # Load model
-# # -----------------------------------------------------
-# model = mujoco.MjModel.from_xml_path("xmls/humanoid/humanoid.xml")
-# data = mujoco.MjData(model)
-# viewer = mujoco_viewer.MujocoViewer(model, data)
-
-hz = 50
-dt = 1.0 / hz
-
-
-# -----------------------------------------------------
-# Quaternion utilities
-# -----------------------------------------------------
-def yaw_to_quat(yaw):
-    return np.array([np.cos(yaw / 2), 0, 0, np.sin(yaw / 2)])
-
-
-def quat_slerp(q1, q2, s):
-    dot = np.dot(q1, q2)
-    if dot < 0.0:
-        q2 = -q2
-        dot = -dot
-    if dot > 0.9995:
-        q = q1 + s * (q2 - q1)
-        return q / np.linalg.norm(q)
-    theta_0 = np.arccos(dot)
-    sin_theta_0 = np.sin(theta_0)
-    theta = theta_0 * s
-    sin_theta = np.sin(theta)
-    s0 = np.cos(theta) - dot * sin_theta / sin_theta_0
-    s1 = sin_theta / sin_theta_0
-    q = s0 * q1 + s1 * q2
-    return q / np.linalg.norm(q)
-
-
-# -----------------------------------------------------
-# Timing parameters
-# -----------------------------------------------------
 move_duration = 2.0
 turn_duration = 0.5
 pause_duration = 3.0
@@ -48,9 +10,7 @@ move_duration /= speed_scale
 turn_duration /= speed_scale
 pause_duration /= speed_scale
 
-# -----------------------------------------------------
-# Define keyframes for translation + orientation
-# -----------------------------------------------------
+
 keyframes = []
 t = 0.0
 

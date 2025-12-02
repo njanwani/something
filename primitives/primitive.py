@@ -21,7 +21,11 @@ class Primitive:
         return cmd
     
     @classmethod
-    def description(self):
+    def description(cls):
+        raise NotImplementedError()
+    
+    @classmethod
+    def name(cls):
         raise NotImplementedError()
     
     @property
@@ -41,8 +45,12 @@ class Rest(Primitive):
         )
     
     @classmethod
+    def name(cls):
+        return 'Rest'
+    
+    @classmethod
     def description(cls):
-        return 'TBD'
+        return 'Robot rests at an idle position.'
     
 class Wave(Primitive):
     
@@ -53,8 +61,12 @@ class Wave(Primitive):
         )
     
     @classmethod
+    def name(cls):
+        return 'Wave'
+    
+    @classmethod
     def description(cls):
-        return 'TBD'
+        return 'Robot waves casually with right hand.'
 
 class FranticWave(Primitive):
     
@@ -65,8 +77,12 @@ class FranticWave(Primitive):
         )
     
     @classmethod
+    def name(cls):
+        return 'FranticWave'
+    
+    @classmethod
     def description(cls):
-        return 'TBD'
+        return 'Robot waves frantically with right hand.'
     
 
 class DoubleWave(Primitive):
@@ -78,8 +94,12 @@ class DoubleWave(Primitive):
         )
     
     @classmethod
+    def name(cls):
+        return 'DoubleWave'
+    
+    @classmethod
     def description(cls):
-        return 'TBD'
+        return 'Robot waves both hands rapidly.'
 
 class Transition(Primitive):
     
@@ -96,6 +116,10 @@ class Transition(Primitive):
         super().__init__(trajectory, duration)
     
     @classmethod
+    def name(cls):
+        return 'Transition'
+    
+    @classmethod
     def description(self):
         return 'Transitions between one primitive to the next'
 
@@ -104,7 +128,7 @@ PRIMITIVES = [
     Wave,
     FranticWave,
     DoubleWave,
-    Transition
+    # Transition
 ]
     
 class Trajectory:
