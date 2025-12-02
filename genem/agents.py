@@ -12,12 +12,12 @@ from primitives.primitive import Primitive
 import re
 
 class Chatbot:
-    def __init__(self, system_prompt=None, model="gpt-4.1", api_key=None, max_retries=3):
+    def __init__(self, system_prompt=None, model="gpt-4.1", max_retries=3):
         """
         Chat-based LLM with persistent conversation history.
         """
-        if api_key:
-            openai.api_key = api_key
+        load_dotenv()
+        api_key = os.getenv("OPENAI_API_KEY")
 
         self.client = OpenAI()
         self.model = model
@@ -71,12 +71,11 @@ class Chatbot:
 
 class SocialExpression(Chatbot):
     
-    def __init__(self, api_key, prompt=Path('genem/prompts/social_understanding.txt')):
+    def __init__(self, prompt=Path('genem/prompts/social_understanding.txt')):
         with open(prompt, 'r') as f:
             system_prompt = f.read()
         super().__init__(
             system_prompt = system_prompt,
-            api_key       = api_key
         )
     
     def query(self, human_scenario):
@@ -90,7 +89,6 @@ class TrajectoryGenerator(Chatbot):
     
     def __init__(
         self, 
-        api_key, 
         primitives: list[Primitive],
         prompt=Path('genem/prompts/robot_expressive.txt')
     ):
@@ -104,7 +102,6 @@ class TrajectoryGenerator(Chatbot):
         final_system_prompt = system_prompt + '\n' + '\n'.join(primitives_descriptions)
         super().__init__(
             system_prompt = final_system_prompt,
-            api_key       = api_key
         )
     def parse_actions(self, s):
         pattern = r"-\s*([A-Za-z_]+)\[([0-9]*\.?[0-9]+)\]"
@@ -141,12 +138,11 @@ class TrajectoryGenerator(Chatbot):
 
 
 if __name__ == '__main__':
-    load_dotenv()
+    
     test = 'gen-em'
     if test == 'chatbot':
         agent = Chatbot(
             system_prompt='when you speak, put a hyphen "-" between each word. ie. hyphens replace spaces, but words themselves remain the same',
-            api_key=os.getenv("OPENAI_API_KEY")
         )
         response = agent.query(prompt='hello world')
         print(response)
@@ -154,14 +150,11 @@ if __name__ == '__main__':
         print(response)
     elif test == 'gen-em':
         from primitives.primitive import PRIMITIVES
-        se = SocialExpression(
-            api_key=os.getenv("OPENAI_API_KEY")
-        )
+        se = SocialExpression()
         se_response = se.query('a human walks into the room for 1 second, waves for 1 second, then leaves in 1 second')
         print(se_response)
         print('Now generating trajectory...')
         tg = TrajectoryGenerator(
-            api_key=os.getenv("OPENAI_API_KEY"),
             primitives=PRIMITIVES
         )
         response = tg.query(se_response)

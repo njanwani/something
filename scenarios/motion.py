@@ -101,6 +101,10 @@ class Wave(HumanoidScenario):
         wave_amp           = 0.5,
         z_height           = 1.28,
     ):
+        self.move_duration = move_duration
+        self.turn_duration = turn_duration
+        self.pause_duration = pause_duration
+        
         self.move_duration /= speed_scale
         self.turn_duration /= speed_scale
         self.pause_duration /= speed_scale
