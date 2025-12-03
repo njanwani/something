@@ -29,7 +29,8 @@ name2idx = create_name2idx(model)
 hz = 50
 dt = 1.0 / hz
 mode = ['genem', 'oracle'][0]
-human_motion = Wave(speed_scale=1.0, name2idx=name2idx)
+# human_motion = Wave(speed_scale=1.0, name2idx=name2idx)
+human_motion = Point(speed_scale=1.0, pickup=False, name2idx=name2idx)
 if mode == 'oracle':
     begin = pm.Rest(duration=2)
     wave  = pm.Wave(duration=4)
@@ -51,6 +52,10 @@ elif mode == 'genem':
     primitives                  = tg.query(expressive_description)
     primitives_with_transitions = pm.add_transitions_to_list(primitives)
     g1_motion                   = pm.Trajectory(*primitives_with_transitions)
+    
+    with open('genem/log.txt', 'w') as f:
+        f.write(str(se.get_history_as_string()))
+        f.write(str(tg.get_history_as_string()))
 
 cam_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_CAMERA, "side_view")
 frames = []

@@ -125,7 +125,7 @@ class NodYes(Primitive):
     
     @classmethod
     def get_description(cls):
-        return 'Robot nods its head up and down (yes).'
+        return 'Robot nods its head up and down (yes) three times.'
 
 class NodNo(Primitive):
     
@@ -141,7 +141,7 @@ class NodNo(Primitive):
     
     @classmethod
     def get_description(cls):
-        return 'Robot shakes its head side to side (no).'
+        return 'Robot shakes its head side to side (no) three times.'
 
 class Transition(Primitive):
     
@@ -239,7 +239,6 @@ class Trajectory:
                 t0 += self.primitives[idx].duration
                 idx += 1
             else:
-                print(idx, t)
                 cmd = self.primitives[idx].move(t - t0)
                 break
         

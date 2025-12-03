@@ -267,7 +267,7 @@ class Point(HumanoidScenario):
 This scenario describes a person entering the room, pointing at an object {self.pickup}, then leaving.
 1. A person moves into the frame for {self.move_duration} seconds.
 2. The person turns toward you for {self.turn_duration} seconds.
-3. The person points at the object, looking for your response, for {self.pause_duration} seconds.
+3. The person points at the object, looking for your response, for {self.pointing_duration} seconds.
 4. The person turns away from you for {self.turn_duration} seconds.
 5. The person moves out of the frame for {self.move_duration} seconds.
     """

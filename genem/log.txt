@@ -1,0 +1,88 @@
+SYSTEM: You are a human who acts in accordance with social norms. You will be presented
+with a situation describing a particular scenario. Reason about what the correct
+actions for you to do should be. Include timestamps and lengths of each motion.
+Keep your desired social behavior to be non-verbal, i.e. no speaking, only moving.
+Feel free to be as expressive as you like and is reasonable!
+
+When you are finished reasoning, write three equal signs "===" and write your
+final answer after, like so:
+===
+[enter your answer here]
+
+USER: 
+This scenario describes a person entering the room, pointing at an object which you CANNOT pick up, then leaving.
+1. A person moves into the frame for 2.0 seconds.
+2. The person turns toward you for 0.5 seconds.
+3. The person points at the object, looking for your response, for 3.0 seconds.
+4. The person turns away from you for 0.5 seconds.
+5. The person moves out of the frame for 2.0 seconds.
+    
+
+ASSISTANT: Let's break down the scenario step-by-step and reason about the desired non-verbal behavior:
+
+1. The person enters the room (2.0s): I should notice them entering and orient my body and head toward them to acknowledge their presence.
+2. The person turns toward me (0.5s): I maintain eye contact, possibly straightening posture to show attention.
+3. The person points at the object and looks for my response (3.0s): Since I cannot pick up the object, I need to non-verbally indicate that I understand their gesture but am unable to comply. Appropriate responses would be:
+   - Look at the object, then back at the person to show I see what they are pointing at.
+   - Briefly raise my hands and shrug my shoulders to indicate "I can't" or "I'm unable."
+   - Maintain a polite, slightly apologetic facial expression.
+4. The person turns away (0.5s): I relax my posture, but keep attention on them as they depart.
+5. The person leaves (2.0s): I watch them leave, then return my attention to a neutral position, possibly glancing once more at the object for a moment.
+
+Timing and movement breakdown:
+
+- 0.0s-2.0s: Turn head/body to notice the person entering, maintain a welcoming posture.
+- 2.0s-2.5s: Make eye contact, straighten posture, show attention.
+- 2.5s-3.0s: After they point, look at the object.
+- 3.0s-4.0s: Look back at the person, raise hands slightly, shrug shoulders, brief apologetic facial expression (hold for 1 second).
+- 4.0s-5.5s: Lower hands, maintain gentle eye contact, then relax posture as they turn away.
+- 5.5s-7.5s: Follow them with gaze as they leave, then return to neutral, possibly glancing at the object again briefly.
+
+===
+0.0s-2.0s: Notice person entering, orient body and head toward them.
+2.0s-2.5s: Make eye contact, straighten posture.
+2.5s-3.0s: Glance at the object being pointed to.
+3.0s-4.0s: Look back at the person, raise hands, shrug shoulders, apologetic facial expression (hold for 1s).
+4.0s-5.5s: Lower hands, relax posture, maintain polite attention as person turns away.
+5.5s-7.5s: Watch person leave, return to neutral position, possibly glance at the object again.SYSTEM: You are a humanoid robot that can move but cannot talk. You will be
+given an example of human expressive behavior. Your task will be to
+construct a list of motion primitives that best matches that behavior. 
+The list of motion primitives will be provided below. Note that if you do not 
+have the right motion primitive for a requested expressive gesture or one does
+not exist, simply choose the closest motion primitive or just ignore it. You should
+reason about the desired behavior before writing your final answer.
+
+Do not add anything else to this list as it needs to match this format. Your 
+should provide your answer after write three equal signs (===), for example
+===
+[enter your list here]
+
+You should provide your answer as a list of primitives and their durations in 
+seconds. Do not add anything else to this list as it needs to match this format. 
+For example,
+===
+- Wave[0.5]
+- Rest[1.0]
+PRIMITIVES LIST
+Rest: Robot rests at an idle position.
+Wave: Robot waves casually with right hand.
+FranticWave: Robot waves frantically with right hand.
+DoubleWave: Robot waves both hands rapidly.
+NodNo: Robot shakes its head side to side (no) three times.
+NodYes: Robot nods its head up and down (yes) three times.
+
+USER: 
+0.0s-2.0s: Notice person entering, orient body and head toward them.
+2.0s-2.5s: Make eye contact, straighten posture.
+2.5s-3.0s: Glance at the object being pointed to.
+3.0s-4.0s: Look back at the person, raise hands, shrug shoulders, apologetic facial expression (hold for 1s).
+4.0s-5.5s: Lower hands, relax posture, maintain polite attention as person turns away.
+5.5s-7.5s: Watch person leave, return to neutral position, possibly glance at the object again.
+
+ASSISTANT: ===
+- Rest[2.0]
+- NodYes[0.5]
+- Rest[0.5]
+- NodNo[1.0]
+- Rest[1.5]
+- Rest[2.0]

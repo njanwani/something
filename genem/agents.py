@@ -68,6 +68,15 @@ class Chatbot:
         """Returns a copy of the conversation history."""
         return list(self.messages)
     
+    def get_history_as_string(self):
+        """Returns the conversation history as a formatted string."""
+        history_str = ""
+        for message in self.messages:
+            role = message["role"].upper()
+            content = message["content"]
+            history_str += f"{role}: {content}\n\n"
+        return history_str.strip()
+    
 
 class SocialExpression(Chatbot):
     
