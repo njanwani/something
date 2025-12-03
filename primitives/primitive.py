@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from pathlib import Path
+from primitives.utils import G1_JOINTS, G1_LEFT_ARM, G1_RIGHT_ARM, G1_HEAD
 
 class Primitive:
     
@@ -8,6 +9,10 @@ class Primitive:
         self.traj     = trajectory
         self.length   = self.traj.shape[0]
         self.duration = duration
+        self.priority = pd.Series(
+            data=np.zeros(len(G1_JOINTS)),
+            index=G1_JOINTS,
+        )
     
     def move(self, t):
         idx  = t / self.duration * (self.length - 1)
@@ -43,6 +48,8 @@ class Rest(Primitive):
             pd.read_csv(Path(r'primitives/data/Rest.csv'), index_col=0),
             duration
         )
+        self.priority[G1_LEFT_ARM] = 1.0
+        self.priority[G1_RIGHT_ARM] = 1.0
     
     @classmethod
     def get_name(cls):
@@ -59,6 +66,8 @@ class Wave(Primitive):
             pd.read_csv(Path(r'primitives/data/Wave.csv'), index_col=0),
             duration
         )
+        self.priority[G1_LEFT_ARM] = 1.0
+        self.priority[G1_RIGHT_ARM] = 1.0
     
     @classmethod
     def get_name(cls):
@@ -101,6 +110,39 @@ class DoubleWave(Primitive):
     def get_description(cls):
         return 'Robot waves both hands rapidly.'
 
+class NodYes(Primitive):
+    
+    def __init__(self, duration):
+        super().__init__(
+            pd.read_csv(Path(r'primitives/data/NodYes.csv'), index_col=0),
+            duration
+        )
+        self.priority[G1_HEAD] = 1.0
+    
+    @classmethod
+    def get_name(cls):
+        return 'NodYes'
+    
+    @classmethod
+    def get_description(cls):
+        return 'Robot nods its head up and down (yes).'
+
+class NodNo(Primitive):
+    
+    def __init__(self, duration):
+        super().__init__(
+            pd.read_csv(Path(r'primitives/data/NodNo.csv'), index_col=0),
+            duration
+        )
+    
+    @classmethod
+    def get_name(cls):
+        return 'NodNo'
+    
+    @classmethod
+    def get_description(cls):
+        return 'Robot shakes its head side to side (no).'
+
 class Transition(Primitive):
     
     def __init__(
@@ -123,6 +165,35 @@ class Transition(Primitive):
     def get_description(self):
         return 'Transitions between one primitive to the next'
     
+class Mix(Primitive):
+    
+    def __init__(
+        self,
+        p1: Primitive,
+        p2: Primitive
+    ):
+        self.p1 = p1
+        self.p2 = p2
+        self.duration = p1.duration if p1.duration > p2.duration else p2.duration
+        
+    def move(self, t):
+        x1 = self.p1.move(t)
+        x2 = self.p2.move(t)
+        
+        avg = (self.p1.priority == self.p2.priority) * (x1 + x2) / 2
+        one = (self.p1.priority >  self.p2.priority) * x1
+        two = (self.p1.priority <  self.p2.priority) * x2
+        return avg + one + two
+    
+    @property
+    def first_position(self):
+        return self.move(0)
+    
+    @property
+    def last_position(self):
+        return self.move(self.duration)
+        
+    
 def add_transitions_to_list(
     primitives: list[Primitive]
 ):
@@ -144,6 +215,8 @@ PRIMITIVES = [
     Wave,
     FranticWave,
     DoubleWave,
+    NodNo,
+    NodYes
     # Transition
 ]
     

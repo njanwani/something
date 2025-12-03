@@ -202,65 +202,75 @@ class Point(HumanoidScenario):
     
     def __init__(
         self,
+        name2idx: dict,
+        pickup=False,
         z_height=1.28,
         move_duration=2.0,
         turn_duration=0.5,
         pause_duration=3.0,
-        pointing_duration=0.3,
-        hold_duration=2.0,
-        return_duration=0.3,
+        pointing_duration=3.0,
         speed_scale=1.0,
     ):
-        
+        self.move_duration     = move_duration  / speed_scale
+        self.turn_duration     = turn_duration / speed_scale
+        self.pause_duration    = pause_duration / speed_scale
+        self.pointing_duration = pointing_duration / speed_scale
+        if pickup:
+            self.pickup = 'which you CAN pick up'
+        else:
+            self.pickup = 'which you CANNOT pick up'
         keyframes = []
         t = 0.0
-        move_duration /= speed_scale
-        turn_duration /= speed_scale
-        pause_duration /= speed_scale
 
         # Start facing east
         keyframes.append((t, np.array([1.5, -3.0]), np.pi / 2))
 
         # Move east (3s)
-        t += move_duration
+        t += self.move_duration
         keyframes.append((t, np.array([1.5, 0.0]), np.pi / 2))
 
         # Turn north (fast)
-        t += turn_duration
+        t += self.turn_duration
         keyframes.append((t, np.array([1.5, 0.0]), -np.pi))
 
         # Pause while pointing and holding (≈3s total)
         point_start = t
-        point_end = t + 3.0 / speed_scale  # total time for point + hold + return
-        keyframes.append((point_end, np.array([1.5, 0.0]), -np.pi))
+        t += self.pointing_duration  # total time for point + hold + return
+        keyframes.append((t, np.array([1.5, 0.0]), -np.pi))
 
-        # Wait 1s before turning east again
-        t = point_end + 1.0 / speed_scale
+        # # Wait 1s before turning east again
+        # t = point_end + self.pointing_duration * 0.8
 
         # Turn east again
-        t += turn_duration
+        t += self.turn_duration
         keyframes.append((t, np.array([1.5, 0.0]), np.pi / 2))
 
         # Continue moving east and north as before
-        t += move_duration
+        t += self.move_duration
         keyframes.append((t, np.array([1.5, 1.5]), np.pi/2))
 
-        t += turn_duration
+        t += self.turn_duration
         keyframes.append((t, np.array([1.5, 1.5]), -np.pi))
 
-        t += 2 * move_duration
-        keyframes.append((t, np.array([-6.0, 1.5]), -np.pi))
-        super().__init__(keyframes, z_height)
+        t += self.move_duration
+        keyframes.append((t, np.array([-3.0, 1.5]), -np.pi))
+        super().__init__(keyframes, z_height, name2idx)
         
-        pointing_duration = pointing_duration / speed_scale  # fast move to pointing
-        hold_duration = hold_duration / speed_scale
-        return_duration = return_duration / speed_scale
-
         # Timeline
         self.pointing_start = point_start
-        self.pointing_hold = self.pointing_start + pointing_duration
-        self.pointing_return = self.pointing_hold + hold_duration
-        self.pointing_end = self.pointing_return + return_duration
+        self.pointing_hold = self.pointing_start + self.pointing_duration * 0.1
+        self.pointing_return = self.pointing_hold + self.pointing_duration * 0.8
+        self.pointing_end = self.pointing_return + self.pointing_duration * 0.1
+        
+    def generate_motion_description(self):
+        return f"""
+This scenario describes a person entering the room, pointing at an object {self.pickup}, then leaving.
+1. A person moves into the frame for {self.move_duration} seconds.
+2. The person turns toward you for {self.turn_duration} seconds.
+3. The person points at the object, looking for your response, for {self.pause_duration} seconds.
+4. The person turns away from you for {self.turn_duration} seconds.
+5. The person moves out of the frame for {self.move_duration} seconds.
+    """
     
     def motion(self, t, qpos):
         """Handles both left default and right arm pointing animation."""

@@ -25,47 +25,20 @@ viewer.cam.elevation = -45
 
 name2idx = create_name2idx(model)
 
-hz = 50
-dt = 1.0 / hz
-mode = 'llm'
-if mode == 'oracle':
-    begin = pm.Rest(duration=2)
-    wave  = pm.Wave(duration=4)
-    end   = pm.Rest(duration=2)
+one   = pm.Rest(duration=2)
+two   = pm.Mix(pm.NodYes(duration=2), pm.Wave(duration=2))
+three = pm.NodNo(duration=2)
 
-    g1_motion = pm.Trajectory(
-        begin,
-        pm.Transition(begin, wave, duration=0.5),
-        wave,
-        pm.Transition(wave, end, duration=0.5),
-        end
-    )
-else:
-    # wait  = pm.Rest(duration=2)
-    # rest  = pm.Rest(duration=2)
-    # wave  = pm.Wave(duration=2)
-    # end   = pm.Rest(duration=2)
+g1_motion = pm.Trajectory(
+    one,
+    pm.Transition(one, two, duration=0.5),
+    two,
+    pm.Transition(two, three, duration=0.5),
+    three
+)
 
-    # g1_motion = pm.Trajectory(
-    #     wait,
-    #     rest,
-    #     wave,
-    #     end
-    # )
-    rest          = pm.Rest(duration=2)
-    frantic_wave  = pm.FranticWave(duration=1.5)
-    end           = pm.Rest(duration=2)
-    wave          = pm.Wave(duration=1)
-    
-
-    g1_motion = pm.Trajectory(
-        rest,
-        frantic_wave,
-        end,
-        wave
-    )
-
-human_motion = Wave(speed_scale=1.0, name2idx=name2idx)
+# human_motion = Wave(speed_scale=1.0, name2idx=name2idx)
+human_motion = Point(speed_scale=1.0, name2idx=name2idx)
 # motion = Point(speed_scale=3.0)
 cam_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_CAMERA, "side_view")
 frames = []
@@ -103,6 +76,6 @@ while viewer.is_alive:
     
 
 if viewer_mode == 'offscreen':
-    mp.write_video(f"{mode}.mp4", frames, fps=30)
+    mp.write_video(f"primitives/show.mp4", frames, fps=30)
 
 viewer.close()

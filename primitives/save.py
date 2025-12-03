@@ -8,47 +8,10 @@ import pandas as pd
 from utils.print_joints import create_name2idx
 import mujoco
 import cv2
+import sys
+from primitives.utils import G1_JOINTS, G1_LEFT_ARM, G1_RIGHT_ARM
 
-G1_LEFT_ARM = [
-    'left_shoulder_pitch_joint',
-    'left_shoulder_roll_joint',
-    'left_shoulder_yaw_joint',
-    'left_elbow_joint',
-    'left_wrist_roll_joint',
-    'left_wrist_pitch_joint',
-    'left_wrist_yaw_joint',
-]
-G1_RIGHT_ARM = [
-    'right_shoulder_pitch_joint',
-    'right_shoulder_roll_joint',
-    'right_shoulder_yaw_joint',
-    'right_elbow_joint',
-    'right_wrist_roll_joint',
-    'right_wrist_pitch_joint',
-    'right_wrist_yaw_joint',
-]
-G1_JOINTS = [
-    'left_hip_pitch_joint',
-    'left_hip_roll_joint',
-    'left_hip_yaw_joint',
-    'left_knee_joint',
-    'left_ankle_pitch_joint',
-    'left_ankle_roll_joint',
-    'right_hip_pitch_joint',
-    'right_hip_roll_joint',
-    'right_hip_yaw_joint',
-    'right_knee_joint',
-    'right_ankle_pitch_joint',
-    'right_ankle_roll_joint',
-    'waist_yaw_joint',
-    'waist_roll_joint',
-    'waist_pitch_joint',
-    'head_pitch_joint',
-    'head_yaw_joint',
-    'head_roll_joint',
-] + G1_LEFT_ARM + G1_RIGHT_ARM
-
-model = mujoco.MjModel.from_xml_path('xmls/scene.xml')
+model = mujoco.MjModel.from_xml_path('xmls/scene_only_g1.xml')
 name2idx = create_name2idx(model)
 
 def rest():
@@ -60,6 +23,24 @@ def rest():
     rest_pos[-7 + name2idx['right_shoulder_roll_joint']]  = -0.121
     rest_pos[-7 + name2idx['right_elbow_joint']]          =  0.916
     traj     = np.array([rest_pos, rest_pos]).astype(float)
+    df = pd.DataFrame(data=traj, columns=G1_JOINTS)
+    return df
+
+def nodyes():
+    NODS = 3
+    t = np.linspace(0, 2 * np.pi * NODS, num=50)
+    nodding_traj = np.sin(t) * 0.2
+    traj = np.zeros((t.shape[0], len(G1_JOINTS)))
+    traj[:, -7 + name2idx['head_pitch_joint']] = nodding_traj
+    df = pd.DataFrame(data=traj, columns=G1_JOINTS)
+    return df
+
+def nodno():
+    NODS = 3
+    t = np.linspace(0, 2 * np.pi * NODS, num=50)
+    nodding_traj = np.sin(t) * 0.2
+    traj = np.zeros((t.shape[0], len(G1_JOINTS)))
+    traj[:, -7 + name2idx['head_yaw_joint']] = nodding_traj
     df = pd.DataFrame(data=traj, columns=G1_JOINTS)
     return df
 
@@ -133,10 +114,12 @@ def wave():
 
 PRIMITIVE_FUNC = {
     'Rest': rest,
-    'Wave': wave
+    'Wave': wave,
+    'NodYes': nodyes,
+    'NodNo': nodno
 }
 
 if __name__ == '__main__':
-    PRIMITIVE = 'Wave'
+    PRIMITIVE = sys.argv[1]
     df = PRIMITIVE_FUNC[PRIMITIVE]()
     df.to_csv(f'primitives/data/{PRIMITIVE}.csv')

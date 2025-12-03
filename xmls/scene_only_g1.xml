@@ -1,4 +1,5 @@
 <mujoco model="g1_29dof_rev_1_0 scene">
+  <!-- <compiler angle="radian" texturedir='..'/> -->
   <default>
     <default class="g1">
       <site rgba="1 0 0 1" size="0.01" group="5"/>
@@ -81,10 +82,9 @@
       </default>
     </default>
   </default>
-  <include file="xmls/unitree_g1/g1.xml"/>
-  <!-- <include file="xmls/humanoid/humanoid.xml"/> -->
-  <include file="xmls/table/table.xml"/>
-  <include file="xmls/wall/wall.xml"/>
+  <include file="unitree_g1/g1.xml"/>
+  <include file="table/table.xml"/>
+  <include file="wall/wall.xml"/>
   
   <!-- <include file="models/mug.xml"/> -->
 
@@ -101,7 +101,7 @@
     <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3"
       markrgb="0.8 0.8 0.8" width="300" height="300"/>
     <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
-    <texture name="stone" file="assets/wood_floor2.png" type="2d"/>
+    <texture name="stone" file="xmls/assets/wood_floor2.png" type="2d"/>
     <material name="stone_floor" texture="stone" texuniform="true" texrepeat="2 2" reflectance="0.0"/>
   </asset>
 
