@@ -8,7 +8,7 @@ import numpy as np
 from openai import OpenAI
 import openai
 import time
-from primitives.primitive import Primitive
+from primitives import primitive as pm
 import re
 
 class Chatbot:
@@ -98,7 +98,7 @@ class TrajectoryGenerator(Chatbot):
     
     def __init__(
         self, 
-        primitives: list[Primitive],
+        primitives: list[pm.Primitive],
         prompt=Path('genem/prompts/robot_expressive.txt')
     ):
         with open(prompt, 'r') as f:
@@ -112,24 +112,63 @@ class TrajectoryGenerator(Chatbot):
         super().__init__(
             system_prompt = final_system_prompt,
         )
+        
+        self.name2primitive = {p.get_name(): p for p in self.primitives}
+    
     def parse_actions(self, s):
-        pattern = r"-\s*([A-Za-z_]+)\[([0-9]*\.?[0-9]+)\]"
-        actions = []
-        durations = []
-        
-        for action, duration in re.findall(pattern, s):
-            actions.append(action)
-            durations.append(float(duration))
-        
-        return actions, durations
+        lines = [line.strip() for line in s.splitlines() if line.strip().startswith("-")]
+
+        actions_list = []
+        durations_list = []
+
+        # Primitive pattern: Name[duration]
+        primitive_re = r"([A-Za-z_]+)\[([0-9]*\.?[0-9]+)\]"
+
+        for line in lines:
+            line = line.lstrip("- ").strip()
+
+            if line.startswith("Mix["):
+                # Extract the inside of Mix[ ... ]
+                inside = line[len("Mix["):-1]
+                parts = [p.strip() for p in inside.split(",")]
+
+                primitives = []
+                durations = []
+
+                for p in parts:
+                    match = re.match(primitive_re, p)
+                    if not match:
+                        raise ValueError(f"Invalid primitive inside Mix: {p}")
+                    name, dur = match.groups()
+                    primitives.append(name)
+                    durations.append(float(dur))
+
+                actions_list.append(tuple(primitives))
+                durations_list.append(tuple(durations))
+
+            else:
+                # Single primitive
+                match = re.match(primitive_re, line)
+                if not match:
+                    raise ValueError(f"Invalid line: {line}")
+                name, dur = match.groups()
+                actions_list.append((name,))
+                durations_list.append((float(dur),))
+
+        return actions_list, durations_list
     
     def get_primitive_list(self, primitives_list, durations_list):
         ret = []
         for p, d in zip(primitives_list, durations_list):
-            for p_obj in self.primitives:
-                if p == p_obj.get_name():
-                    ret.append(p_obj(d))
-                    break
+            if len(p) == 1:
+                p_to_add = self.name2primitive[p[0]](d[0])
+            else:
+                print(p)
+                p_to_add = pm.Mix(
+                    self.name2primitive[p[0]](d[0]),
+                    self.name2primitive[p[1]](d[1])
+                )
+            ret.append(p_to_add)
         
         return ret
 

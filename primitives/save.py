@@ -26,8 +26,8 @@ def rest():
     df = pd.DataFrame(data=traj, columns=G1_JOINTS)
     return df
 
-def nodyes():
-    NODS = 3
+def nodhead():
+    NODS = 1
     t = np.linspace(0, 2 * np.pi * NODS, num=50)
     nodding_traj = np.sin(t) * 0.2
     traj = np.zeros((t.shape[0], len(G1_JOINTS)))
@@ -35,8 +35,8 @@ def nodyes():
     df = pd.DataFrame(data=traj, columns=G1_JOINTS)
     return df
 
-def nodno():
-    NODS = 3
+def shakehead():
+    NODS = 1
     t = np.linspace(0, 2 * np.pi * NODS, num=50)
     nodding_traj = np.sin(t) * 0.2
     traj = np.zeros((t.shape[0], len(G1_JOINTS)))
@@ -115,8 +115,8 @@ def wave():
 PRIMITIVE_FUNC = {
     'Rest': rest,
     'Wave': wave,
-    'NodYes': nodyes,
-    'NodNo': nodno
+    'NodHead': nodhead,
+    'ShakeHead': shakehead
 }
 
 if __name__ == '__main__':

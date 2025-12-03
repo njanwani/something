@@ -6,14 +6,11 @@ have the right motion primitive for a requested expressive gesture or one does
 not exist, simply choose the closest motion primitive or just ignore it. You should
 reason about the desired behavior before writing your final answer.
 
-Do not add anything else to this list as it needs to match this format. Your 
-should provide your answer after write three equal signs (===), for example
-===
-[enter your list here]
-
-You should provide your answer as a list of primitives and their durations in 
-seconds. Do not add anything else to this list as it needs to match this format. 
-For example,
+Do not add anything else to this list as it needs to match this format. Before
+providing your answer, write three equal signs (===). You should provide 
+your answer as a list of primitives, any arguments they specify, and their 
+durations in seconds. Do not add anything else to this list as it needs to 
+match this format. USE AT LEAST ONE MIX PRIMITIVE. For example,
 ===
 - Wave[0.5]
 - Rest[1.0]

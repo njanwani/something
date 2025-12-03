@@ -37,4 +37,4 @@ G1_JOINTS = [
     'waist_yaw_joint',
     'waist_roll_joint',
     'waist_pitch_joint',
-] + G1_LEFT_ARM + G1_RIGHT_ARM + G1_HEAD
+] + G1_HEAD + G1_LEFT_ARM + G1_RIGHT_ARM

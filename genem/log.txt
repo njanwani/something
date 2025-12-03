@@ -18,33 +18,43 @@ This scenario describes a person entering the room, pointing at an object which 
 5. The person moves out of the frame for 2.0 seconds.
     
 
-ASSISTANT: Let's break down the scenario step-by-step and reason about the desired non-verbal behavior:
+ASSISTANT: Let's break down the scenario step by step:
 
-1. The person enters the room (2.0s): I should notice them entering and orient my body and head toward them to acknowledge their presence.
-2. The person turns toward me (0.5s): I maintain eye contact, possibly straightening posture to show attention.
-3. The person points at the object and looks for my response (3.0s): Since I cannot pick up the object, I need to non-verbally indicate that I understand their gesture but am unable to comply. Appropriate responses would be:
-   - Look at the object, then back at the person to show I see what they are pointing at.
-   - Briefly raise my hands and shrug my shoulders to indicate "I can't" or "I'm unable."
-   - Maintain a polite, slightly apologetic facial expression.
-4. The person turns away (0.5s): I relax my posture, but keep attention on them as they depart.
-5. The person leaves (2.0s): I watch them leave, then return my attention to a neutral position, possibly glancing once more at the object for a moment.
+1. Person enters (2.0s)
+   - I notice the person entering. I should look up from what I'm doing and direct my gaze toward them, perhaps adjusting my posture to show attentiveness.
 
-Timing and movement breakdown:
+2. Person turns toward me (0.5s)
+   - I maintain eye contact or at least keep my attention focused on them, remaining open and attentive.
 
-- 0.0s-2.0s: Turn head/body to notice the person entering, maintain a welcoming posture.
-- 2.0s-2.5s: Make eye contact, straighten posture, show attention.
-- 2.5s-3.0s: After they point, look at the object.
-- 3.0s-4.0s: Look back at the person, raise hands slightly, shrug shoulders, brief apologetic facial expression (hold for 1 second).
-- 4.0s-5.5s: Lower hands, maintain gentle eye contact, then relax posture as they turn away.
-- 5.5s-7.5s: Follow them with gaze as they leave, then return to neutral, possibly glancing at the object again briefly.
+3. Person points at the object, seeking my response (3.0s)
+   - Since I cannot pick up the object, I need to indicate non-verbally that I understand their gesture but am unable to comply.
+   - I should:
+     - Look at where they are pointing (0.5s), then back at them (0.5s).
+     - Shrug my shoulders mildly (1.0s) to indicate inability.
+     - Perhaps spread my hands palms up or shake my head gently (1.0s) to reinforce the meaning.
+     - Hold a regretful or apologetic facial expression.
+
+4. Person turns away (0.5s)
+   - My posture relaxes slightly, I watch them as they turn away, and my expression returns to neutral.
+
+5. Person leaves (2.0s)
+   - I track their movement with my gaze, maybe offer a small nod of acknowledgment or a soft, apologetic smile as they go.
+   - Once they are gone, I return to my previous activity.
+
+Summary of actions with timestamps/lengths:
+- 2.0s: Look up and attend to person.
+- 0.5s: Maintain attentive posture.
+- 0.5s: Follow their pointing gesture to the object.
+- 0.5s: Look back at them.
+- 1.0s: Shrug shoulders.
+- 1.0s: Spread hands, palms up, or gentle head shake; apologetic facial expression.
+- 0.5s: Relax posture as they turn.
+- 2.0s: Watch them leave, small nod or apologetic smile.
+- Return to neutral.
 
 ===
-0.0s-2.0s: Notice person entering, orient body and head toward them.
-2.0s-2.5s: Make eye contact, straighten posture.
-2.5s-3.0s: Glance at the object being pointed to.
-3.0s-4.0s: Look back at the person, raise hands, shrug shoulders, apologetic facial expression (hold for 1s).
-4.0s-5.5s: Lower hands, relax posture, maintain polite attention as person turns away.
-5.5s-7.5s: Watch person leave, return to neutral position, possibly glance at the object again.SYSTEM: You are a humanoid robot that can move but cannot talk. You will be
+
+As the person enters (2.0s), I look up and direct my attention toward them. As they turn to me (0.5s), I maintain an attentive posture. When they point at the object (3.0s), I follow their gesture with my eyes (0.5s), look back at them (0.5s), shrug my shoulders (1.0s), and spread my hands, palms up, or gently shake my head (1.0s), all while wearing a regretful or apologetic expression. As they turn away (0.5s), I relax my posture and watch them. As they leave (2.0s), I track them with my gaze, possibly offering a small apologetic smile or nod, and then return to my previous activity.SYSTEM: You are a humanoid robot that can move but cannot talk. You will be
 given an example of human expressive behavior. Your task will be to
 construct a list of motion primitives that best matches that behavior. 
 The list of motion primitives will be provided below. Note that if you do not 
@@ -52,14 +62,11 @@ have the right motion primitive for a requested expressive gesture or one does
 not exist, simply choose the closest motion primitive or just ignore it. You should
 reason about the desired behavior before writing your final answer.
 
-Do not add anything else to this list as it needs to match this format. Your 
-should provide your answer after write three equal signs (===), for example
-===
-[enter your list here]
-
-You should provide your answer as a list of primitives and their durations in 
-seconds. Do not add anything else to this list as it needs to match this format. 
-For example,
+Do not add anything else to this list as it needs to match this format. Before
+providing your answer, write three equal signs (===). You should provide 
+your answer as a list of primitives, any arguments they specify, and their 
+durations in seconds. Do not add anything else to this list as it needs to 
+match this format. USE AT LEAST ONE MIX PRIMITIVE. For example,
 ===
 - Wave[0.5]
 - Rest[1.0]
@@ -68,21 +75,19 @@ Rest: Robot rests at an idle position.
 Wave: Robot waves casually with right hand.
 FranticWave: Robot waves frantically with right hand.
 DoubleWave: Robot waves both hands rapidly.
-NodNo: Robot shakes its head side to side (no) three times.
-NodYes: Robot nods its head up and down (yes) three times.
+NodHead: Robot nods its head up and down one time.
+ShakeHead: Robot shakes its head side to side one time.
+Mix: Usage: Mix[Primitive1[duration1], Primitive2[duration2]]. Mixes two primitives together based on which joints each primitive uses. If the two primitives use the same joints, then they are averaged The larger of the 2 durations will be used.
 
 USER: 
-0.0s-2.0s: Notice person entering, orient body and head toward them.
-2.0s-2.5s: Make eye contact, straighten posture.
-2.5s-3.0s: Glance at the object being pointed to.
-3.0s-4.0s: Look back at the person, raise hands, shrug shoulders, apologetic facial expression (hold for 1s).
-4.0s-5.5s: Lower hands, relax posture, maintain polite attention as person turns away.
-5.5s-7.5s: Watch person leave, return to neutral position, possibly glance at the object again.
+
+As the person enters (2.0s), I look up and direct my attention toward them. As they turn to me (0.5s), I maintain an attentive posture. When they point at the object (3.0s), I follow their gesture with my eyes (0.5s), look back at them (0.5s), shrug my shoulders (1.0s), and spread my hands, palms up, or gently shake my head (1.0s), all while wearing a regretful or apologetic expression. As they turn away (0.5s), I relax my posture and watch them. As they leave (2.0s), I track them with my gaze, possibly offering a small apologetic smile or nod, and then return to my previous activity.
 
 ASSISTANT: ===
 - Rest[2.0]
-- NodYes[0.5]
+- Mix[NodHead[0.5], Rest[0.5]]
 - Rest[0.5]
-- NodNo[1.0]
-- Rest[1.5]
+- Mix[ShakeHead[1.0], Rest[1.0]]
+- Rest[0.5]
+- NodHead[1.0]
 - Rest[2.0]

@@ -110,38 +110,39 @@ class DoubleWave(Primitive):
     def get_description(cls):
         return 'Robot waves both hands rapidly.'
 
-class NodYes(Primitive):
+class NodHead(Primitive):
     
     def __init__(self, duration):
         super().__init__(
-            pd.read_csv(Path(r'primitives/data/NodYes.csv'), index_col=0),
+            pd.read_csv(Path(r'primitives/data/NodHead.csv'), index_col=0),
             duration
         )
         self.priority[G1_HEAD] = 1.0
     
     @classmethod
     def get_name(cls):
-        return 'NodYes'
+        return 'NodHead'
     
     @classmethod
     def get_description(cls):
-        return 'Robot nods its head up and down (yes) three times.'
+        return 'Robot nods its head up and down one time.'
 
-class NodNo(Primitive):
+class ShakeHead(Primitive):
     
     def __init__(self, duration):
         super().__init__(
-            pd.read_csv(Path(r'primitives/data/NodNo.csv'), index_col=0),
+            pd.read_csv(Path(r'primitives/data/ShakeHead.csv'), index_col=0),
             duration
         )
+        self.priority[G1_HEAD] = 1.0
     
     @classmethod
     def get_name(cls):
-        return 'NodNo'
+        return 'ShakeHead'
     
     @classmethod
     def get_description(cls):
-        return 'Robot shakes its head side to side (no) three times.'
+        return 'Robot shakes its head side to side one time.'
 
 class Transition(Primitive):
     
@@ -192,6 +193,14 @@ class Mix(Primitive):
     @property
     def last_position(self):
         return self.move(self.duration)
+    
+    @classmethod
+    def get_name(cls):
+        return 'Mix'
+    
+    @classmethod
+    def get_description(cls):
+        return 'Usage: Mix[Primitive1[duration1], Primitive2[duration2]]. Mixes two primitives together based on which joints each primitive uses. If the two primitives use the same joints, then they are averaged The larger of the 2 durations will be used.'
         
     
 def add_transitions_to_list(
@@ -215,8 +224,9 @@ PRIMITIVES = [
     Wave,
     FranticWave,
     DoubleWave,
-    NodNo,
-    NodYes
+    NodHead,
+    ShakeHead,
+    Mix
     # Transition
 ]
     
