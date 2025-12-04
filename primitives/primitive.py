@@ -67,7 +67,7 @@ class Wave(Primitive):
             duration
         )
         self.priority[G1_LEFT_ARM] = 1.0
-        self.priority[G1_RIGHT_ARM] = 1.0
+        self.priority[G1_RIGHT_ARM] = 2.0
     
     @classmethod
     def get_name(cls):
@@ -84,6 +84,8 @@ class FranticWave(Primitive):
             pd.read_csv(Path(r'primitives/data/Frantic_Wave.csv'), index_col=0),
             duration
         )
+        self.priority[G1_LEFT_ARM] = 1.0
+        self.priority[G1_RIGHT_ARM] = 2.0
     
     @classmethod
     def get_name(cls):
@@ -101,6 +103,8 @@ class DoubleWave(Primitive):
             pd.read_csv(Path(r'primitives/data/Double_Wave.csv'), index_col=0),
             duration
         )
+        self.priority[G1_LEFT_ARM] = 2.0
+        self.priority[G1_RIGHT_ARM] = 2.0
     
     @classmethod
     def get_name(cls):

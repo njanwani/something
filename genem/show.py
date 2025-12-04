@@ -29,8 +29,8 @@ name2idx = create_name2idx(model)
 hz = 50
 dt = 1.0 / hz
 mode = ['genem', 'oracle'][0]
-# human_motion = Wave(speed_scale=1.0, name2idx=name2idx)
-human_motion = Point(speed_scale=1.0, pickup=False, name2idx=name2idx)
+human_motion = Wave(speed_scale=1.0, name2idx=name2idx)
+# human_motion = Point(speed_scale=1.0, pickup=False, name2idx=name2idx)
 if mode == 'oracle':
     begin = pm.Rest(duration=2)
     wave  = pm.Wave(duration=4)

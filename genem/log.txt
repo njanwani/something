@@ -10,51 +10,39 @@ final answer after, like so:
 [enter your answer here]
 
 USER: 
-This scenario describes a person entering the room, pointing at an object which you CANNOT pick up, then leaving.
+This scenario describes a person entering the room, waving at you, then leaving.
 1. A person moves into the frame for 2.0 seconds.
 2. The person turns toward you for 0.5 seconds.
-3. The person points at the object, looking for your response, for 3.0 seconds.
+3. The person waves for 3.0 seconds.
 4. The person turns away from you for 0.5 seconds.
 5. The person moves out of the frame for 2.0 seconds.
     
 
-ASSISTANT: Let's break down the scenario step by step:
+ASSISTANT: Let's break down the scenario step by step and determine the socially appropriate, non-verbal response:
 
-1. Person enters (2.0s)
-   - I notice the person entering. I should look up from what I'm doing and direct my gaze toward them, perhaps adjusting my posture to show attentiveness.
+1. A person moves into the frame for 2.0 seconds.
+   - As the person enters, it's polite to acknowledge their presence. I should make eye contact and orient my body slightly toward them as they arrive (starting at 0:00, lasting for 2.0 seconds).
 
-2. Person turns toward me (0.5s)
-   - I maintain eye contact or at least keep my attention focused on them, remaining open and attentive.
+2. The person turns toward you for 0.5 seconds.
+   - As they turn toward me, I maintain eye contact, perhaps with a gentle, friendly expression or a small smile (from 2.0 to 2.5 seconds).
 
-3. Person points at the object, seeking my response (3.0s)
-   - Since I cannot pick up the object, I need to indicate non-verbally that I understand their gesture but am unable to comply.
-   - I should:
-     - Look at where they are pointing (0.5s), then back at them (0.5s).
-     - Shrug my shoulders mildly (1.0s) to indicate inability.
-     - Perhaps spread my hands palms up or shake my head gently (1.0s) to reinforce the meaning.
-     - Hold a regretful or apologetic facial expression.
+3. The person waves for 3.0 seconds.
+   - When the person waves, the appropriate response is to return the wave. I should raise my hand and wave back in a friendly manner, starting as soon as they begin waving (from 2.5 to 5.5 seconds). My wave should match the duration and energy of theirs—so for the full 3.0 seconds.
 
-4. Person turns away (0.5s)
-   - My posture relaxes slightly, I watch them as they turn away, and my expression returns to neutral.
+4. The person turns away from you for 0.5 seconds.
+   - As they turn away, I can lower my hand and let my facial expression relax, but still look in their direction out of courtesy (from 5.5 to 6.0 seconds).
 
-5. Person leaves (2.0s)
-   - I track their movement with my gaze, maybe offer a small nod of acknowledgment or a soft, apologetic smile as they go.
-   - Once they are gone, I return to my previous activity.
+5. The person moves out of the frame for 2.0 seconds.
+   - As they leave, I can follow their movement with my gaze briefly, then return to a neutral posture as they exit fully (from 6.0 to 8.0 seconds).
 
-Summary of actions with timestamps/lengths:
-- 2.0s: Look up and attend to person.
-- 0.5s: Maintain attentive posture.
-- 0.5s: Follow their pointing gesture to the object.
-- 0.5s: Look back at them.
-- 1.0s: Shrug shoulders.
-- 1.0s: Spread hands, palms up, or gentle head shake; apologetic facial expression.
-- 0.5s: Relax posture as they turn.
-- 2.0s: Watch them leave, small nod or apologetic smile.
-- Return to neutral.
+Overall, the whole response is non-verbal, warm, and acknowledges the person's greeting.
 
 ===
-
-As the person enters (2.0s), I look up and direct my attention toward them. As they turn to me (0.5s), I maintain an attentive posture. When they point at the object (3.0s), I follow their gesture with my eyes (0.5s), look back at them (0.5s), shrug my shoulders (1.0s), and spread my hands, palms up, or gently shake my head (1.0s), all while wearing a regretful or apologetic expression. As they turn away (0.5s), I relax my posture and watch them. As they leave (2.0s), I track them with my gaze, possibly offering a small apologetic smile or nod, and then return to my previous activity.SYSTEM: You are a humanoid robot that can move but cannot talk. You will be
+0:00–2:00: Notice person entering, turn body and face toward them.
+2:00–2:50: Maintain eye contact, smile gently.
+2:50–5:50: As they wave, raise hand and wave back in a friendly manner.
+5:50–6:00: Lower hand as they turn away, keep polite attention.
+6:00–8:00: Briefly follow their exit with your gaze, then relax into a neutral posture.SYSTEM: You are a humanoid robot that can move but cannot talk. You will be
 given an example of human expressive behavior. Your task will be to
 construct a list of motion primitives that best matches that behavior. 
 The list of motion primitives will be provided below. Note that if you do not 
@@ -80,14 +68,17 @@ ShakeHead: Robot shakes its head side to side one time.
 Mix: Usage: Mix[Primitive1[duration1], Primitive2[duration2]]. Mixes two primitives together based on which joints each primitive uses. If the two primitives use the same joints, then they are averaged The larger of the 2 durations will be used.
 
 USER: 
-
-As the person enters (2.0s), I look up and direct my attention toward them. As they turn to me (0.5s), I maintain an attentive posture. When they point at the object (3.0s), I follow their gesture with my eyes (0.5s), look back at them (0.5s), shrug my shoulders (1.0s), and spread my hands, palms up, or gently shake my head (1.0s), all while wearing a regretful or apologetic expression. As they turn away (0.5s), I relax my posture and watch them. As they leave (2.0s), I track them with my gaze, possibly offering a small apologetic smile or nod, and then return to my previous activity.
+0:00–2:00: Notice person entering, turn body and face toward them.
+2:00–2:50: Maintain eye contact, smile gently.
+2:50–5:50: As they wave, raise hand and wave back in a friendly manner.
+5:50–6:00: Lower hand as they turn away, keep polite attention.
+6:00–8:00: Briefly follow their exit with your gaze, then relax into a neutral posture.
 
 ASSISTANT: ===
 - Rest[2.0]
-- Mix[NodHead[0.5], Rest[0.5]]
+- Mix[Rest[0.5], NodHead[0.5]]
 - Rest[0.5]
-- Mix[ShakeHead[1.0], Rest[1.0]]
-- Rest[0.5]
-- NodHead[1.0]
+- Mix[Rest[2.0], Wave[3.0]]
+- Rest[0.1]
+- Mix[Rest[1.0], NodHead[1.0]]
 - Rest[2.0]
