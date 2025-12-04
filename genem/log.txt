@@ -10,39 +10,45 @@ final answer after, like so:
 [enter your answer here]
 
 USER: 
-This scenario describes a person entering the room, waving at you, then leaving.
+This scenario describes a person entering the room, pointing at an object which you CAN pick up, then leaving.
 1. A person moves into the frame for 2.0 seconds.
 2. The person turns toward you for 0.5 seconds.
-3. The person waves for 3.0 seconds.
+3. The person points at the object, looking for your response, for 3.0 seconds.
 4. The person turns away from you for 0.5 seconds.
 5. The person moves out of the frame for 2.0 seconds.
     
 
-ASSISTANT: Let's break down the scenario step by step and determine the socially appropriate, non-verbal response:
+ASSISTANT: Let's break down the correct, socially appropriate non-verbal actions for this scenario:
 
-1. A person moves into the frame for 2.0 seconds.
-   - As the person enters, it's polite to acknowledge their presence. I should make eye contact and orient my body slightly toward them as they arrive (starting at 0:00, lasting for 2.0 seconds).
+1. The person enters the room (2.0s): You should acknowledge their entrance by making brief eye contact or turning your attention toward them. This can be done by subtly turning your head or upper body.
 
-2. The person turns toward you for 0.5 seconds.
-   - As they turn toward me, I maintain eye contact, perhaps with a gentle, friendly expression or a small smile (from 2.0 to 2.5 seconds).
+2. The person turns toward you (0.5s): Maintain your attention on them, perhaps straightening your posture slightly to indicate you are engaged and attentive.
 
-3. The person waves for 3.0 seconds.
-   - When the person waves, the appropriate response is to return the wave. I should raise my hand and wave back in a friendly manner, starting as soon as they begin waving (from 2.5 to 5.5 seconds). My wave should match the duration and energy of theirs—so for the full 3.0 seconds.
+3. The person points at the object (3.0s): This is the cue. During this time, you should look at the object being pointed at, then look back at the person to check for confirmation or intent. If their pointing and gaze suggest they want you to pick it up, prepare to do so by reaching toward the object. Begin moving your hand slowly toward the object as they finish pointing, but do not pick it up just yet—wait until they leave, to avoid interrupting their action.
 
-4. The person turns away from you for 0.5 seconds.
-   - As they turn away, I can lower my hand and let my facial expression relax, but still look in their direction out of courtesy (from 5.5 to 6.0 seconds).
+4. The person turns away from you (0.5s): As they turn, you can move your hand closer to the object in anticipation, showing you understood their request.
 
-5. The person moves out of the frame for 2.0 seconds.
-   - As they leave, I can follow their movement with my gaze briefly, then return to a neutral posture as they exit fully (from 6.0 to 8.0 seconds).
+5. The person leaves the room (2.0s): Once they are fully out of the frame, you can proceed to pick up the object smoothly and deliberately. Hold the object as if waiting for further instructions or to hand it over when they return.
 
-Overall, the whole response is non-verbal, warm, and acknowledges the person's greeting.
+Timing breakdown of your actions:
+- 0.0–2.0s: Notice their entrance, subtly turn attention to them.
+- 2.0–2.5s: Focus on them as they turn toward you.
+- 2.5–5.5s: Look at the object being pointed at, then back at the person. Begin to reach toward the object near the end of this window.
+- 5.5–6.0s: Move hand closer to the object as they turn away.
+- 6.0–8.0s: As soon as they are out of view, pick up the object and hold it, ready for their return.
+
+Summary of non-verbal actions:
+- Attentive orientation and eye contact
+- Shifting gaze between person and object
+- Reaching toward object in anticipation
+- Picking up the object after they leave, holding it appropriately
 
 ===
-0:00–2:00: Notice person entering, turn body and face toward them.
-2:00–2:50: Maintain eye contact, smile gently.
-2:50–5:50: As they wave, raise hand and wave back in a friendly manner.
-5:50–6:00: Lower hand as they turn away, keep polite attention.
-6:00–8:00: Briefly follow their exit with your gaze, then relax into a neutral posture.SYSTEM: You are a humanoid robot that can move but cannot talk. You will be
+0.0–2.0s: Face the person as they enter.  
+2.0–2.5s: Stay attentive as they turn to you.  
+2.5–5.5s: Look at the object when pointed at, then back to the person; begin to reach toward the object near the end of this interval.  
+5.5–6.0s: Move your hand closer to the object as they turn away.  
+6.0–8.0s: Once the person leaves, pick up the object and hold it, awaiting their return.SYSTEM: You are a humanoid robot that can move but cannot talk. You will be
 given an example of human expressive behavior. Your task will be to
 construct a list of motion primitives that best matches that behavior. 
 The list of motion primitives will be provided below. Note that if you do not 
@@ -68,17 +74,16 @@ ShakeHead: Robot shakes its head side to side one time.
 Mix: Usage: Mix[Primitive1[duration1], Primitive2[duration2]]. Mixes two primitives together based on which joints each primitive uses. If the two primitives use the same joints, then they are averaged The larger of the 2 durations will be used.
 
 USER: 
-0:00–2:00: Notice person entering, turn body and face toward them.
-2:00–2:50: Maintain eye contact, smile gently.
-2:50–5:50: As they wave, raise hand and wave back in a friendly manner.
-5:50–6:00: Lower hand as they turn away, keep polite attention.
-6:00–8:00: Briefly follow their exit with your gaze, then relax into a neutral posture.
+0.0–2.0s: Face the person as they enter.  
+2.0–2.5s: Stay attentive as they turn to you.  
+2.5–5.5s: Look at the object when pointed at, then back to the person; begin to reach toward the object near the end of this interval.  
+5.5–6.0s: Move your hand closer to the object as they turn away.  
+6.0–8.0s: Once the person leaves, pick up the object and hold it, awaiting their return.
 
 ASSISTANT: ===
 - Rest[2.0]
-- Mix[Rest[0.5], NodHead[0.5]]
 - Rest[0.5]
-- Mix[Rest[2.0], Wave[3.0]]
-- Rest[0.1]
-- Mix[Rest[1.0], NodHead[1.0]]
+- Mix[NodHead[1.0], Rest[3.0]]
+- Mix[Wave[0.5], Rest[2.5]]
+- Mix[Wave[0.5], Rest[0.5]]
 - Rest[2.0]

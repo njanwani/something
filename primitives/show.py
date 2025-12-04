@@ -26,8 +26,8 @@ viewer.cam.elevation = -45
 name2idx = create_name2idx(model)
 
 one   = pm.Rest(duration=2)
-two   = pm.Mix(pm.NodYes(duration=2), pm.Wave(duration=2))
-three = pm.NodNo(duration=2)
+two   = pm.Mix(pm.NodHead(duration=2), pm.Wave(duration=2))
+three = pm.Rest(duration=20)
 
 g1_motion = pm.Trajectory(
     one,
@@ -43,7 +43,7 @@ human_motion = Point(speed_scale=1.0, name2idx=name2idx)
 cam_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_CAMERA, "side_view")
 frames = []
 while viewer.is_alive:
-    if data.time > 13:
+    if data.time > g1_motion.duration:
         break
     start = time.time()
     data.qpos[:] = 0

@@ -1,14 +1,10 @@
 <mujoco model="mug">
-  <compiler angle="radian" meshdir="environment/models/assets" autolimits="true"/>  
-  <visual>
-    <headlight ambient="0 0 0" diffuse="0 0 0" specular="1 1 1"/>
-    <quality shadowsize="8192"/>
-  </visual>
+  <compiler angle="radian" texturedir='..' meshdir='..' autolimits="true"/>  
 
   <asset>
     <texture name="mug" file="assets/mug.png" type="2d"/>
     <material name="mug" texture="mug" specular="1" shininess="1"/>
-    <mesh file="mug.obj" scale=".01 .01 .01"/>
+    <mesh file="assets/mug.obj" scale=".01 .01 .01"/>
   </asset>
 
   <default>
@@ -26,8 +22,8 @@
   <worldbody>
     <body name="mug" pos="0.4 0 0.4" euler="0 0 0"> <!-- pos="0.3 0 0.25"  -->
       <freejoint/>
-      <!-- <geom type="mesh" mesh="mug" material="mug" pos="0.3 0.3 0.1" euler="1.57 0 0" group="1" contype="1" conaffinity="1"/> -->
-      <geom type="box" size="0.05 0.05 0.05" pos="0 0 0" group="1" contype="1" conaffinity="1"/>
+      <geom type="mesh" mesh="mug" material="mug" pos="0.4 0.2 0.66" euler="1.57 2.0 0" group="1" contype="1" conaffinity="1"/>
+      <!-- <geom type="box" size="0.05 0.05 0.05" pos="0 0 0" group="1" contype="1" conaffinity="1"/> -->
     </body>
   </worldbody>
 </mujoco>
