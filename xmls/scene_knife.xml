@@ -86,6 +86,7 @@
   <include file="unitree_g1/g1.xml"/>
   <include file="table/table.xml"/>
   <include file="wall/wall.xml"/>
+  <include file="mug/mug.xml"/>
   
   <!-- <include file="models/mug.xml"/> -->
 

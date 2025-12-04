@@ -1,0 +1,81 @@
+SYSTEM: You are a human who acts in accordance with social norms. You will be presented
+with a situation describing a particular scenario. Reason about what the correct
+actions for you to do should be. Include timestamps and lengths of each motion.
+Keep your desired social behavior to be non-verbal, i.e. no speaking, only moving.
+Feel free to be as expressive as you like and is reasonable!
+
+When you are finished reasoning, write three equal signs "===" and write your
+final answer after, like so:
+===
+[enter your answer here]
+
+USER: 
+This scenario describes a person entering the room, waving at you, then leaving.
+1. A person moves into the frame for 2.0 seconds.
+2. The person turns toward you for 0.5 seconds.
+3. The person waves for 3.0 seconds.
+4. The person turns away from you for 0.5 seconds.
+5. The person moves out of the frame for 2.0 seconds.
+    
+
+ASSISTANT: In this scenario, someone enters, acknowledges you with a wave, and leaves. The socially appropriate response is to acknowledge their greeting with a friendly, non-verbal gesture—usually a wave or a smile. Since there’s no speaking allowed, a smile and wave is the best option.
+
+Let’s time this in sync with their actions:
+
+1. (0:00-2:00) The person moves into the frame. During this time, notice their entrance. Sit or stand attentively, perhaps make subtle eye contact or turn slightly towards them to show you’ve noticed.
+
+2. (2:00-2:50) The person turns toward you. As they turn, prepare to reciprocate their greeting—turn your body toward them if you haven’t already, and make eye contact.
+
+3. (2:50-5:50) The person waves for 3 seconds. As soon as you see their wave (right at 2:50), begin smiling warmly and raise your hand to wave back. Hold the wave for about 2 seconds, overlapping with their wave, then begin to lower your hand. Continue the smile throughout, and maybe give a small nod to reinforce friendliness.
+
+4. (5:50-6:00) The person turns away. As they turn away, let your hand return to your side and relax your posture, but keep the pleasant expression for another second or two.
+
+5. (6:00-8:00) The person moves out of the frame. Return to your previous activity, or simply relax, indicating that the brief greeting has concluded.
+
+Motion breakdown:
+- (2:50-4:50) Smile and wave for 2 seconds.
+- (4:50-5:50) Lower hand, maintain smile.
+- (5:50-6:50) Relax smile as the person leaves.
+
+===
+
+(2:00) Turn body and make eye contact as person turns toward you.  
+(2:50-4:50) Smile and wave back warmly for 2 seconds, overlapping with their wave.  
+(4:50-5:50) Lower hand, maintain smile and slight nod.  
+(5:50-6:50) Relax smile as person leaves and return to neutral posture.SYSTEM: You are a humanoid robot that can move but cannot talk. You will be
+given an example of human expressive behavior. Your task will be to
+construct a list of motion primitives that best matches that behavior. 
+The list of motion primitives will be provided below. Note that if you do not 
+have the right motion primitive for a requested expressive gesture or one does
+not exist, simply choose the closest motion primitive or just ignore it. You should
+reason about the desired behavior before writing your final answer.
+
+Do not add anything else to this list as it needs to match this format. Before
+providing your answer, write three equal signs (===). You should provide 
+your answer as a list of primitives, any arguments they specify, and their 
+durations in seconds. Do not add anything else to this list as it needs to 
+match this format. USE AT LEAST ONE MIX PRIMITIVE. For example,
+===
+- Wave[0.5]
+- Rest[1.0]
+PRIMITIVES LIST
+Rest: Robot rests at an idle position.
+Wave: Robot waves casually with right hand.
+FranticWave: Robot waves frantically with right hand.
+DoubleWave: Robot waves both hands rapidly.
+NodHead: Robot nods its head up and down one time.
+ShakeHead: Robot shakes its head side to side one time.
+Mix: Usage: Mix[Primitive1[duration1], Primitive2[duration2]]. Mixes two primitives together based on which joints each primitive uses. If the two primitives use the same joints, then they are averaged The larger of the 2 durations will be used.
+
+USER: 
+
+(2:00) Turn body and make eye contact as person turns toward you.  
+(2:50-4:50) Smile and wave back warmly for 2 seconds, overlapping with their wave.  
+(4:50-5:50) Lower hand, maintain smile and slight nod.  
+(5:50-6:50) Relax smile as person leaves and return to neutral posture.
+
+ASSISTANT: ===
+- Mix[Wave[2.0], NodHead[2.0]]
+- Rest[0.5]
+- NodHead[1.0]
+- Rest[1.0]
