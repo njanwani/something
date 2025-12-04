@@ -36,9 +36,9 @@ def nodhead():
     return df
 
 def shakehead():
-    NODS = 1
+    NODS = 4
     t = np.linspace(0, 2 * np.pi * NODS, num=50)
-    nodding_traj = np.sin(t) * 0.2
+    nodding_traj = np.sin(t) * 0.4
     traj = np.zeros((t.shape[0], len(G1_JOINTS)))
     traj[:, -7 + name2idx['head_yaw_joint']] = nodding_traj
     df = pd.DataFrame(data=traj, columns=G1_JOINTS)

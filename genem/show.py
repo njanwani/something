@@ -10,6 +10,7 @@ import time
 from scenarios.motion import Wave, Point
 import mediapy as mp
 from genem import agents as agi
+from tqdm import tqdm
 
 def create_viewer(model, data, viewer_mode):
     viewer = mujoco_viewer.MujocoViewer(model, data, hide_menus=True, mode=viewer_mode)
@@ -22,9 +23,9 @@ def create_viewer(model, data, viewer_mode):
 def make_scenario(scenario):
     if scenario == 'wave':
         path = Path('xmls/scene.xml')
-    elif scenario == 'pickup-good':
+    elif scenario == 'good-pickup':
         path = Path('xmls/scene_mug.xml')
-    elif scenario == 'pickup-bad':
+    elif scenario == 'bad-pickup':
         path = Path('xmls/scene_knife.xml')
     else:
         raise Exception('Bad scenario')
@@ -56,15 +57,37 @@ def create_g1_motion(scenario, ctrl_mode, human_motion, name2idx):
                 pm.Transition(hi, end, duration=0.3),
                 end
             )
-        elif scenario == 'pickup-good':
-            pass
-        elif scenario == 'pickup-bad':
-            pass
+        elif scenario == 'good-pickup':
+            begin = pm.Rest(duration=2.2)
+            yes   = pm.Mix(pm.NodHead(duration=0.6), pm.Rest(duration=0.1))
+            end   = pm.Rest(duration=2)
+
+            g1_motion = pm.Trajectory(
+                begin,
+                pm.Transition(begin, yes, duration=0.3),
+                yes,
+                yes,
+                yes,
+                pm.Transition(yes, end, duration=0.3),
+                end
+            )
+        elif scenario == 'bad-pickup':
+            begin = pm.Rest(duration=2.2)
+            no   =  pm.Mix(pm.ShakeHead(duration=3), pm.DoubleWave(duration=3))
+            end   = pm.Rest(duration=2)
+
+            g1_motion = pm.Trajectory(
+                begin,
+                pm.Transition(begin, no, duration=0.3),
+                no,
+                pm.Transition(no, end, duration=0.3),
+                end
+            )
         else:
             raise Exception('Bad scenario')
     elif ctrl_mode == 'genem':
         print('generating trajectory...')
-        se = agi.SocialExpression()
+        se = agi.SocialExpression(pm.PRIMITIVES)
         tg = agi.TrajectoryGenerator(pm.PRIMITIVES)
         
         expressive_description      = se.query(human_motion.generate_motion_description())
@@ -82,7 +105,7 @@ def create_g1_motion(scenario, ctrl_mode, human_motion, name2idx):
 
 def simulate(model, data, viewer, human_motion, g1_motion, name2idx, G1_XYZ_ROOT, VIDEO_MODE, HZ):
     frames = []
-    while viewer.is_alive:
+    for _ in tqdm(range(HZ * 13)):
         if data.time > 13:
             break
         start = time.time()
@@ -120,8 +143,8 @@ def main():
     G1_XYZ_ROOT   = 'floating_base_joint_xyz'
     HZ            = 50
     SCENARIO      = ['wave', 'good-pickup', 'bad-pickup'][0]
-    CTRL_MODE     = ['genem', 'oracle'][1]
-    VIDEO_MODE    = ['offscreen', 'window'][1]
+    CTRL_MODE     = ['genem', 'oracle'][0]
+    VIDEO_MODE    = ['offscreen', 'window'][0]
     
     model, data   = make_scenario(SCENARIO)
     name2idx      = create_name2idx(model)
@@ -144,7 +167,7 @@ def main():
 
     if VIDEO_MODE == 'offscreen':
         print('saving to video')
-        mp.write_video(f"{SCENARIO}_{CTRL_MODE}.mp4", frames, fps=HZ)
+        mp.write_video(f"videos/{SCENARIO}_{CTRL_MODE}.mp4", frames, fps=HZ)
 
     viewer.close()
     

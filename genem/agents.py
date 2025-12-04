@@ -80,11 +80,17 @@ class Chatbot:
 
 class SocialExpression(Chatbot):
     
-    def __init__(self, prompt=Path('genem/prompts/social_understanding.txt')):
+    def __init__(self, primitives, prompt=Path('genem/prompts/social_understanding.txt')):
         with open(prompt, 'r') as f:
             system_prompt = f.read()
+        self.primitives = primitives
+        primitives_descriptions = [
+            p.get_name() + ': ' + p.get_description() for p in primitives
+        ]
+        primitives_descriptions = ['PRIMITIVES LIST'] + primitives_descriptions
+        final_system_prompt = system_prompt + '\n' + '\n'.join(primitives_descriptions)
         super().__init__(
-            system_prompt = system_prompt,
+            system_prompt = final_system_prompt,
         )
     
     def query(self, human_scenario):

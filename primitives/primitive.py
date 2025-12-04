@@ -75,7 +75,7 @@ class Wave(Primitive):
     
     @classmethod
     def get_description(cls):
-        return 'Robot waves casually with right hand.'
+        return 'Robot waves casually with right hand only.'
 
 class FranticWave(Primitive):
     
@@ -93,7 +93,7 @@ class FranticWave(Primitive):
     
     @classmethod
     def get_description(cls):
-        return 'Robot waves frantically with right hand.'
+        return 'Robot waves frantically with right hand only.'
     
 
 class DoubleWave(Primitive):
@@ -112,7 +112,7 @@ class DoubleWave(Primitive):
     
     @classmethod
     def get_description(cls):
-        return 'Robot waves both hands rapidly.'
+        return 'Robot waves both hands rapidly in the air.'
 
 class NodHead(Primitive):
     
@@ -129,7 +129,7 @@ class NodHead(Primitive):
     
     @classmethod
     def get_description(cls):
-        return 'Robot nods its head up and down one time.'
+        return 'Robot nods its head up and down one time. Should be combined with Rest for best effects.'
 
 class ShakeHead(Primitive):
     
@@ -146,7 +146,7 @@ class ShakeHead(Primitive):
     
     @classmethod
     def get_description(cls):
-        return 'Robot shakes its head side to side one time.'
+        return 'Robot quickly shakes its head side to side four times. Should be combined with Rest for best effects.'
 
 class Transition(Primitive):
     

@@ -22,54 +22,45 @@ ShakeHead: Robot quickly shakes its head side to side four times. Should be comb
 Mix: Usage: Mix[Primitive1[duration1], Primitive2[duration2]]. Mixes two primitives together based on which joints each primitive uses. If the two primitives use the same joints, then they are averaged The larger of the 2 durations will be used.
 
 USER: 
-This scenario describes a person entering the room, waving at you, then leaving.
+This scenario describes a person entering the room, pointing at an object which you CAN pick up, then leaving.
 1. A person moves into the frame for 2.0 seconds.
 2. The person turns toward you for 0.5 seconds.
-3. The person waves for 3.0 seconds.
+3. The person points at the object, looking for your response, for 3.0 seconds.
 4. The person turns away from you for 0.5 seconds.
 5. The person moves out of the frame for 2.0 seconds.
     
 
-ASSISTANT: Let me re-describe and analyze the scenario:
+ASSISTANT: Let's re-describe the scene:
 
-1. A person enters the room and comes into view over 2.0 seconds.
-2. The person faces toward me, taking 0.5 seconds.
-3. The person waves at me for 3.0 seconds.
-4. The person turns away, taking 0.5 seconds.
-5. The person leaves the room and is out of view over 2.0 seconds.
+- At 0s, the room is empty, and you (the robot) are at rest.
+- At 0s–2.0s, a person enters the room.
+- At 2.0s–2.5s, the person turns to face you.
+- At 2.5s–5.5s, the person points at an object, looking for your reaction.
+- At 5.5s–6.0s, the person turns away.
+- At 6.0s–8.0s, the person leaves the room.
 
-My goal is to respond non-verbally and politely. When someone waves at me, a socially appropriate response would be to wave back. Since they are only waving with one hand (likely a casual greeting), I should mirror with a casual right-hand wave. Before and after waving, I should remain at rest to signal attentiveness and then a return to neutral once the person has left.
+Your non-verbal, socially appropriate response should indicate understanding and readiness to comply, without actually picking up the object yet (since the person is not requesting you explicitly or present to receive it). A nod is a common gesture for acknowledgment. This should occur while the person is looking at you and pointing at the object (2.5s–5.5s). Returning to Rest when the person leaves is appropriate.
 
-Here’s the breakdown with timestamps and motion primitives:
+Timestamps + motions:
 
-0.0s-2.0s: Rest  
-- I remain at rest as the person enters. This shows attentiveness and readiness, without being intrusive.
+- 0.0s–2.5s: Rest. Remain still and at ease while the person enters and turns.
+    - Reason: Idle and attentive, not initiating interaction unprompted.
+- 2.5s–3.0s: Mix[NodHead[0.5s], Rest[0.5s]]. Nod head once while otherwise at rest.
+    - Reason: Non-verbally acknowledges the person’s gesture and indicates understanding.
+- 3.0s–5.5s: Rest. Remain at rest after the nod, showing you are ready and waiting.
+    - Reason: Avoids excessive motion; readiness is conveyed.
+- 5.5s–8.0s: Rest. Stay idle as the person turns away and exits.
+    - Reason: No further action is needed after the person leaves.
 
-2.0s-2.5s: Rest  
-- The person is turning toward me. I continue to rest, maintaining focus.
-
-2.5s-5.5s: Wave  
-- The person starts waving at me for 3.0 seconds. I wave back with my right hand for the same duration, matching their gesture in a friendly, reciprocal manner.
-
-5.5s-6.0s: Rest  
-- The person turns away. I smoothly return to the rest position, signaling the end of the interaction.
-
-6.0s-8.0s: Rest  
-- The person leaves the frame. I remain at rest, showing politeness and closure.
-
-Each motion is necessary as follows:
-- Rest at the start/end: Demonstrates attentiveness and then a polite return to neutral.
-- Wave only when waved at: Matches social expectation for reciprocal nonverbal greeting.
-- No unnecessary movement: Keeps the response clear and context-appropriate.
+Every motion is minimal and purposeful: NodHead is used in response to the pointing to show understanding, and Rest is maintained otherwise to avoid confusion or over-expressiveness.
 
 ===
 
-1. Scenario: A person enters, waves at you, then leaves.
-2. Motions:
-- 0.0s–2.5s: Rest (person enters and turns toward you)
-- 2.5s–5.5s: Wave (mirror the person’s wave for 3.0s)
-- 5.5s–8.0s: Rest (person turns away and leaves the frame)  
-Each motion is timed to match the person’s actions, maintaining polite, friendly, and socially appropriate non-verbal communication.SYSTEM: You are a humanoid robot that can move but cannot talk. You will be
+1. The person enters the room, points at an object you can pick up, then leaves.
+2. 
+- 0.0s–2.5s: Rest. (Idle as the person enters and turns toward you.)
+- 2.5s–3.0s: Mix[NodHead[0.5s], Rest[0.5s]]. (Nod once to acknowledge the pointing gesture.)
+- 3.0s–8.0s: Rest. (Return to idle as the person finishes the gesture, turns away, and leaves.)SYSTEM: You are a humanoid robot that can move but cannot talk. You will be
 given an example of human expressive behavior. Your task will be to
 construct a list of motion primitives that best matches that behavior with the
 goal of preserving the emotion or intent that your input conveys.
@@ -99,16 +90,15 @@ Mix: Usage: Mix[Primitive1[duration1], Primitive2[duration2]]. Mixes two primiti
 
 USER: 
 
-1. Scenario: A person enters, waves at you, then leaves.
-2. Motions:
-- 0.0s–2.5s: Rest (person enters and turns toward you)
-- 2.5s–5.5s: Wave (mirror the person’s wave for 3.0s)
-- 5.5s–8.0s: Rest (person turns away and leaves the frame)  
-Each motion is timed to match the person’s actions, maintaining polite, friendly, and socially appropriate non-verbal communication.
+1. The person enters the room, points at an object you can pick up, then leaves.
+2. 
+- 0.0s–2.5s: Rest. (Idle as the person enters and turns toward you.)
+- 2.5s–3.0s: Mix[NodHead[0.5s], Rest[0.5s]]. (Nod once to acknowledge the pointing gesture.)
+- 3.0s–8.0s: Rest. (Return to idle as the person finishes the gesture, turns away, and leaves.)
 
-ASSISTANT: To match the described expressive behavior, I need to simulate a polite, friendly greeting as someone enters, then reciprocate their wave, and finally return to rest as they leave. The desired intent is to mirror human etiquette: stay neutral at first (Rest), then actively greet (Wave), then return to neutral (Rest). The timing for each phase is provided, so the primitives should align exactly to these intervals.
+ASSISTANT: To match the described behavior, I need to convey that the robot is idle as the person enters, acknowledges the pointing gesture with a nod, and then returns to idle as the person leaves. The primitive list provided does not include pointing or tracking gestures, so my focus will be on the acknowledgment (NodHead) and idle (Rest) motions. The Mix primitive is suggested for combining the nod and idle posture, closely matching a single nod with minimal movement otherwise. The durations will follow the input timing.
 
 ===
 - Rest[2.5]
-- Wave[3.0]
-- Rest[2.5]
+- Mix[NodHead[0.5], Rest[0.5]]
+- Rest[5.0]

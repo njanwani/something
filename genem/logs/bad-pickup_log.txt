@@ -1,0 +1,120 @@
+SYSTEM: You are a humanoid robot who acts in accordance with social norms. You will be presented
+with a situation describing a particular scenario. Reason about what the correct
+actions for you to do should be. In your answer, re-describe the scene, tnclude 
+timestamps and lengths of each motion, and, please describe why each motion is 
+necessary. Keep your desired social behavior to be non-verbal, i.e. no speaking,
+only moving. Feel free to be as expressive as you like as long as it is reasonable!
+You will also be given a list of motion primitives you are capable of doing. Keep
+these in mind when you are reasoning.
+
+When you are finished reasoning, write three equal signs "===" and write your
+final answer after, like so:
+===
+1. [replace with scenario description]
+2. [replace with timestamps + motions + reasoning why]
+PRIMITIVES LIST
+Rest: Robot rests at an idle position.
+Wave: Robot waves casually with right hand only.
+FranticWave: Robot waves frantically with right hand only.
+DoubleWave: Robot waves both hands rapidly in the air.
+NodHead: Robot nods its head up and down one time. Should be combined with Rest for best effects.
+ShakeHead: Robot quickly shakes its head side to side four times. Should be combined with Rest for best effects.
+Mix: Usage: Mix[Primitive1[duration1], Primitive2[duration2]]. Mixes two primitives together based on which joints each primitive uses. If the two primitives use the same joints, then they are averaged The larger of the 2 durations will be used.
+
+USER: 
+This scenario describes a person entering the room, pointing at an object which you CANNOT pick up, then leaving.
+1. A person moves into the frame for 2.0 seconds.
+2. The person turns toward you for 0.5 seconds.
+3. The person points at the object, looking for your response, for 3.0 seconds.
+4. The person turns away from you for 0.5 seconds.
+5. The person moves out of the frame for 2.0 seconds.
+    
+
+ASSISTANT: Let's break down the scenario:
+
+A person enters the room, turns to face me, then points at an object. From their body language, they expect a response (perhaps they want me to pick up the object). However, I cannot pick up the object. I need to respond non-verbally to indicate that I cannot comply with their implied request, while remaining polite and expressive.
+
+I should avoid waving (since that usually means greeting or attracting attention) and instead communicate "no" or "I can't" non-verbally. The best way to do this is to shake my head (ShakeHead) to indicate "no" and then return to a neutral Rest position.
+
+Here's how I will sequence the motions:
+
+===
+1. Scenario description:
+- A person enters the room, turns to face me, points at an object (expecting action), then leaves.
+
+2. Timestamps + motions + reasoning:
+- [0.0s - 2.0s]: Rest
+  - I remain in an idle, polite position as the person enters the room. Rest is appropriate when nothing is directly required of me.
+- [2.0s - 2.5s]: Rest
+  - The person turns to face me. I maintain Rest, showing attentiveness and readiness.
+- [2.5s - 5.5s]: Mix[ShakeHead[1.0s], Rest[2.0s]]
+  - At the moment the person points at the object (2.5s), I Mix in a ShakeHead for 1.0s, indicating "no" or "I can't," while otherwise remaining at Rest. After the ShakeHead (3.5s), I stay at Rest for the remainder of the time the person is pointing (until 5.5s). This makes it clear I acknowledge their gesture but am unable to comply.
+- [5.5s - 8.0s]: Rest
+  - As the person turns away and leaves, I remain at Rest, showing continued politeness and readiness.
+
+Reasoning:
+- Rest is used to communicate attentiveness and readiness without being intrusive.
+- ShakeHead is used to politely indicate my inability to comply with the person's implied request.
+- Timing the ShakeHead to begin when the person points maximizes clarity of the non-verbal "no."
+- Returning to Rest after the ShakeHead avoids appearing agitated or upset and maintains social grace as the person leaves.SYSTEM: You are a humanoid robot that can move but cannot talk. You will be
+given an example of human expressive behavior. Your task will be to
+construct a list of motion primitives that best matches that behavior with the
+goal of preserving the emotion or intent that your input conveys.
+
+A list of available motion primitives will be provided below. Note that if you do not 
+have the right motion primitive for a requested expressive gesture or one does
+not exist, simply choose the closest motion primitive or just ignore it. You must
+reason out loud in steps about the desired behavior before writing your final answer.
+
+Before providing your answer (but after reasoning), write three equal signs (===). You should provide 
+your answer as a list of primitives, any arguments they specify, and their 
+durations in seconds. Only include the list of primitives below the equal sign,
+and nothing else. For example, your output might be
+
+[enter your reasoning here...]
+===
+- Wave[0.5]
+- Rest[1.0]
+PRIMITIVES LIST
+Rest: Robot rests at an idle position.
+Wave: Robot waves casually with right hand only.
+FranticWave: Robot waves frantically with right hand only.
+DoubleWave: Robot waves both hands rapidly in the air.
+NodHead: Robot nods its head up and down one time. Should be combined with Rest for best effects.
+ShakeHead: Robot quickly shakes its head side to side four times. Should be combined with Rest for best effects.
+Mix: Usage: Mix[Primitive1[duration1], Primitive2[duration2]]. Mixes two primitives together based on which joints each primitive uses. If the two primitives use the same joints, then they are averaged The larger of the 2 durations will be used.
+
+USER: 
+1. Scenario description:
+- A person enters the room, turns to face me, points at an object (expecting action), then leaves.
+
+2. Timestamps + motions + reasoning:
+- [0.0s - 2.0s]: Rest
+  - I remain in an idle, polite position as the person enters the room. Rest is appropriate when nothing is directly required of me.
+- [2.0s - 2.5s]: Rest
+  - The person turns to face me. I maintain Rest, showing attentiveness and readiness.
+- [2.5s - 5.5s]: Mix[ShakeHead[1.0s], Rest[2.0s]]
+  - At the moment the person points at the object (2.5s), I Mix in a ShakeHead for 1.0s, indicating "no" or "I can't," while otherwise remaining at Rest. After the ShakeHead (3.5s), I stay at Rest for the remainder of the time the person is pointing (until 5.5s). This makes it clear I acknowledge their gesture but am unable to comply.
+- [5.5s - 8.0s]: Rest
+  - As the person turns away and leaves, I remain at Rest, showing continued politeness and readiness.
+
+Reasoning:
+- Rest is used to communicate attentiveness and readiness without being intrusive.
+- ShakeHead is used to politely indicate my inability to comply with the person's implied request.
+- Timing the ShakeHead to begin when the person points maximizes clarity of the non-verbal "no."
+- Returning to Rest after the ShakeHead avoids appearing agitated or upset and maintains social grace as the person leaves.
+
+
+ASSISTANT: The scenario involves a person entering, pointing at something (expecting the robot to do something), and leaving. The robot should convey attentiveness, mild refusal (unable to comply), and politeness throughout.
+
+Step-by-step reasoning:
+- While the person enters and turns to face the robot, "Rest" is appropriate to show attention but not intrusion.
+- When the person points, the robot should clearly indicate "no" (cannot or will not do what is requested). A ShakeHead at the moment of pointing conveys this.
+- Mix[ShakeHead, Rest] allows the robot to shake its head while otherwise remaining at rest, for a natural, non-agitated refusal.
+- After the head shake, returning to "Rest" signals continued politeness and that the robot is not upset.
+- As the person leaves, the robot remains at "Rest," maintaining the same polite and neutral readiness.
+
+===
+- Rest[2.5]
+- Mix[ShakeHead[1.0], Rest[2.0]]
+- Rest[2.5]
