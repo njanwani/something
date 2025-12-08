@@ -2,7 +2,7 @@ name: something-hri
 channels:
   - defaults
 dependencies:
-  - bzip2=1.0.8=h80987f9_6
+  # - bzip2=1.0.8=h80987f9_6
   - ca-certificates=2025.9.9=hca03da5_0
   - expat=2.7.1=h313beb8_0
   - libcxx=20.1.8=h8869778_0
