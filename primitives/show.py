@@ -26,15 +26,20 @@ viewer.cam.elevation = -45
 name2idx = create_name2idx(model)
 
 one   = pm.Rest(duration=2)
-two   = pm.Mix(pm.NodHead(duration=2), pm.Wave(duration=2))
+# two   = pm.Mix(pm.NodHead(duration=2), pm.Wave(duration=2))
+two = pm.Wave(duration=4)
 three = pm.Rest(duration=20)
 
 g1_motion = pm.Trajectory(
     one,
     pm.Transition(one, two, duration=0.5),
     two,
-    pm.Transition(two, three, duration=0.5),
-    three
+    two,
+    two,
+    two,
+    two,
+    two,
+    two,
 )
 
 # human_motion = Wave(speed_scale=1.0, name2idx=name2idx)
